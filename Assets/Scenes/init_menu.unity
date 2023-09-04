@@ -191,8 +191,8 @@ Canvas:
   m_GameObject: {fileID: 20126956}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1674534673}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -203,7 +203,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_TargetDisplay: 0
 --- !u!224 &20126960
 RectTransform:
@@ -235,7 +235,7 @@ GameObject:
   m_Component:
   - component: {fileID: 62802716}
   - component: {fileID: 62802717}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: black_wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -251,8 +251,8 @@ Transform:
   m_GameObject: {fileID: 62802715}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.998, y: -0.0537, z: 4.445956}
-  m_LocalScale: {x: 12.921752, y: 13.172739, z: 1}
+  m_LocalPosition: {x: -31.3915, y: -0.0537, z: 4.445956}
+  m_LocalScale: {x: 47.7084, y: 13.172739, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1009651412}
@@ -297,7 +297,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
@@ -392,9 +392,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 433848516}
-        m_TargetAssemblyTypeName: menu, Assembly-CSharp
-        m_MethodName: Change_to_3
+      - m_Target: {fileID: 1009651413}
+        m_TargetAssemblyTypeName: change_wall, Assembly-CSharp
+        m_MethodName: change_2_3
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -451,7 +451,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 86125946}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: menu3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1240,6 +1240,8 @@ MonoBehaviour:
   menu3: {fileID: 86125945}
   back_treshhold_time: 0
   menu_moving: 0
+  ViewportScreenWidth: 0
+  speed: 0.01
 --- !u!1 &486614116
 GameObject:
   m_ObjectHideFlags: 0
@@ -1423,23 +1425,23 @@ GameObject:
   m_Component:
   - component: {fileID: 1009651412}
   - component: {fileID: 1009651413}
-  m_Layer: 0
+  - component: {fileID: 1009651414}
+  m_Layer: 6
   m_Name: chage_walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1009651412
-Transform:
+--- !u!224 &1009651412
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1009651411}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.8370404, y: 0.3452803, z: -4.445956}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -4.445956}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1447,6 +1449,11 @@ Transform:
   - {fileID: 1921838705}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 3.8370361, y: 0.3453369}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1009651413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1459,8 +1466,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 009357cd0506cd64c943dd3ae2386178, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  black_wall: {fileID: 0}
-  white_wall: {fileID: 0}
+  black_wall: {fileID: 62802715}
+  white_wall: {fileID: 1921838704}
+--- !u!223 &1009651414
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1009651411}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 1674534673}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0
 --- !u!1 &1049998145
 GameObject:
   m_ObjectHideFlags: 0
@@ -2158,9 +2188,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 433848516}
-        m_TargetAssemblyTypeName: menu, Assembly-CSharp
-        m_MethodName: Change_to_3
+      - m_Target: {fileID: 1009651413}
+        m_TargetAssemblyTypeName: change_wall, Assembly-CSharp
+        m_MethodName: change_2_3
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2532,7 +2562,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1921838705}
   - component: {fileID: 1921838706}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: white_wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2548,8 +2578,8 @@ Transform:
   m_GameObject: {fileID: 1921838704}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.4289594, y: 2.7687197, z: 4.445956}
-  m_LocalScale: {x: 11.535983, y: 6.2145, z: 1}
+  m_LocalPosition: {x: 27.4161, y: 2.7687197, z: 4.445956}
+  m_LocalScale: {x: 55.51, y: 6.2145, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1009651412}
@@ -2594,7 +2624,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 101
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2746,5 +2776,5 @@ SceneRoots:
   - {fileID: 1674534674}
   - {fileID: 202062899}
   - {fileID: 433848515}
-  - {fileID: 20126960}
   - {fileID: 1009651412}
+  - {fileID: 20126960}
