@@ -8,11 +8,14 @@ public class change_wall : MonoBehaviour
 
     public GameObject black_wall;
     public GameObject white_wall;
+    public GameObject camera;
+    
     // Start is called before the first frame update
 
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(camera);
     }
     void Start()
     {

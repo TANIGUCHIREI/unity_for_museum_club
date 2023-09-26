@@ -17,7 +17,7 @@ public class menu : MonoBehaviour
     public float ViewportScreenWidth;
     //public GameObject cameraobj;
     //public Camera cam;
-    public float speed = 0.01f;
+    public float speed = 0;
 
     
     // Start is called before the first frame update
@@ -31,10 +31,12 @@ public class menu : MonoBehaviour
         //cameraobj = GameObject.Find("Main Camera");
         //cam = cameraobj.GetComponent<Camera>();
         //ViewportScreenWidth =  cam.ScreenToViewportPoint(new Vector3(Screen.width, 0, 0)).x;
-        //Debug.Log(Screen.width);
-        menu2_1.transform.Translate(new Vector3(Screen.width, 0,0));
-        menu2_2.transform.Translate(new Vector3(Screen.width, 0, 0));
-        menu3.transform.Translate(new Vector3(2* Screen.width, 0, 0));
+        menu2_1.GetComponent<RectTransform>().anchoredPosition = new Vector3(Screen.width, 0, 0);
+        //menu2_1.transform.Translate(new Vector3(Screen.width, 0,0));
+        Debug.Log(menu2_1.GetComponent<RectTransform>().anchoredPosition.x);
+        menu2_2.GetComponent<RectTransform>().anchoredPosition = new Vector3(Screen.width, 0, 0);
+        //menu3.GetComponent<RectTransform>().anchoredPosition = new Vector3(2*Screen.width, 0, 0);
+        //普通のtransform.position指定ではrectTransformの値が全くおかしくなってしまったので、RectTransformを使用した
 
     }
 
@@ -71,9 +73,10 @@ public class menu : MonoBehaviour
 
     public void menu_back()
     {
-        if(menus.transform.position.x !<= 0)
+        if(menus.GetComponent<RectTransform>().anchoredPosition.x! <-100)
         {
             //メニューが１ではなく2_1とか2_2とか3ならバックできる
+            //speed分translateさせて動くから、実際には若干座標がずれることに注意
             StartCoroutine(menu_move(speed));
         }
         
@@ -99,11 +102,12 @@ public class menu : MonoBehaviour
         //menusはtransformはrectのほうが扱いやすい・・・というかそっちが解像度で管理されているのでそちらで処理します
         float init_x = menus.GetComponent<RectTransform>().anchoredPosition.x;
         float menus_position_x = init_x;
+        Debug.Log("速度:" +  speed);
         while (Mathf.Abs(menus_position_x - init_x) < Screen.width)
         {
-            //Debug.Log(Mathf.Abs(menus_position_x - init_x));
-            Debug.Log(menus.GetComponent<RectTransform>().anchoredPosition.x);
-            menus.transform.Translate(speed, 0, 0);
+            Debug.Log(Mathf.Abs(menus_position_x - init_x));
+            //Debug.Log(menus.GetComponent<RectTransform>().anchoredPosition.x);
+            menus.GetComponent<RectTransform>().Translate(speed, 0, 0);
             menus_position_x = menus.GetComponent<RectTransform>().anchoredPosition.x;
             yield return null; //これすることで画面に出力されるようになる
         }
