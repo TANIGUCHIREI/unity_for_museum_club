@@ -20,7 +20,7 @@ public class Gacha_Controller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        camera0 = GameObject.Find("Init_Camera"); //‚Í‚¶‚ß‚©‚çˆø‚«Œp‚ª‚ê‚½‚â‚Â
+        camera0 = GameObject.Find("Init_Camera"); //ï¿½Í‚ï¿½ï¿½ß‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½
         SpotLight = GameObject.Find("Directional Light");
         SpotLight.GetComponent<Light>().intensity = 0f;
         camera1.SetActive(false);
@@ -35,6 +35,7 @@ public class Gacha_Controller : MonoBehaviour
     }
 
     // Update is called once per frame
+    //writed in vsc on lab's PC
     void Update()
     {
         
