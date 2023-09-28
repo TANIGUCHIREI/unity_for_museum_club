@@ -9,7 +9,12 @@ public class menu : MonoBehaviour
     public GameObject menu1;
     public GameObject menu2_1;
     public GameObject menu2_2;
-    public GameObject menu3; //多分使わない
+    //public GameObject menu3; //多分使わない
+
+    public GameObject kansai_obj;
+    public GameObject other_japan_obj;
+
+    public GameObject japan_3Dmap;
 
     public float back_treshhold_time = 0;
     public bool menu_moving = false; //連打して動いちゃわない用のやつ
@@ -23,10 +28,12 @@ public class menu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 60; //これで全体的に固定されるとか？→実際に固定された！必ず一度は通ることろにこれを置いておけばOK
+
         menu1.SetActive(true);
         menu2_1.SetActive(false);
         menu2_2.SetActive(false);
-        menu3.SetActive(true);
+        //menu3.SetActive(true);
 
         //cameraobj = GameObject.Find("Main Camera");
         //cam = cameraobj.GetComponent<Camera>();
@@ -35,6 +42,8 @@ public class menu : MonoBehaviour
         //menu2_1.transform.Translate(new Vector3(Screen.width, 0,0));
         Debug.Log(menu2_1.GetComponent<RectTransform>().anchoredPosition.x);
         menu2_2.GetComponent<RectTransform>().anchoredPosition = new Vector3(Screen.width, 0, 0);
+        Vector3 init_japn_pos = japan_3Dmap.GetComponent<RectTransform>().anchoredPosition;
+        japan_3Dmap.GetComponent<RectTransform>().anchoredPosition = new Vector3(Screen.width, 0, 0) + init_japn_pos;
         //menu3.GetComponent<RectTransform>().anchoredPosition = new Vector3(2*Screen.width, 0, 0);
         //普通のtransform.position指定ではrectTransformの値が全くおかしくなってしまったので、RectTransformを使用した
 
@@ -94,6 +103,20 @@ public class menu : MonoBehaviour
             }
         }
         
+    }
+
+    public void OnKansaiOnlyOn()
+    {
+        kansai_obj.GetComponent<Animator>().SetBool("pop", false);
+        other_japan_obj.GetComponent<Animator>().SetBool("pop", true);
+
+    }
+
+    public void OnAllJapnOn()
+    {
+        kansai_obj.GetComponent<Animator>().SetBool("pop", true);
+        other_japan_obj.GetComponent<Animator>().SetBool("pop",false);
+
     }
 
     IEnumerator menu_move(float speed)
