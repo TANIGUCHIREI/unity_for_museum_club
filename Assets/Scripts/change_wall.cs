@@ -39,6 +39,9 @@ public class change_wall : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, 10, 2));
         SceneManager.LoadScene("Gacha");
+        camera.GetComponent<Camera>().orthographic = false; //これすることで並行図法から透視図法になる
+        camera.GetComponent<Camera>().fieldOfView = 71;   //見た感じこれが最適解っぽい
+        //camera.transform.position = new Vector3(0, 1.5f, 2.7f);
 
         yield return new WaitForSeconds(0.5f);
          StartCoroutine(Relative_Line_move(obj: white_wall, 0, 10, 2));
