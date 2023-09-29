@@ -33,6 +33,7 @@ public class menu : MonoBehaviour
         menu1.SetActive(true);
         menu2_1.SetActive(false);
         menu2_2.SetActive(false);
+        japan_3Dmap.SetActive(true);
         //menu3.SetActive(true);
 
         //cameraobj = GameObject.Find("Main Camera");
