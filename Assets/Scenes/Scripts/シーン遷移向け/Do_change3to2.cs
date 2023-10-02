@@ -9,7 +9,7 @@ public class Do_change3to2 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        change_walls = GameObject.Find("change_walls");
+        change_walls = GameObject.Find("Change_walls_UI");
     }
 
     // Update is called once per frame

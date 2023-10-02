@@ -49,8 +49,8 @@ public class cahngewall_3to2 : MonoBehaviour
     public void change_3_2()
     {
         //buttonではIEnumeratorがなんか見つからなかったからその対策用
-        camera.SetActive(false);
-        camera.SetActive(true);
+        //camera.SetActive(false);
+        //camera.SetActive(true);
         //コルーチン内ではどんなSetActiveもしちゃだめっぽい？
         StartCoroutine(menu_change3_to_2());
     }
@@ -60,11 +60,11 @@ public class cahngewall_3to2 : MonoBehaviour
         
         yield return null;
         Debug.Log("yield return nullが動いた！！");
-        StartCoroutine(Relative_Line_move(obj: black_wall, 0, 10, 2)); //yield returnしないとyiledしないのですぐに下の処理が始まる
+        StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width, 2)); //yield returnしないとyiledしないのですぐに下の処理が始まる
         
         yield return new WaitForSeconds(0.5f);
         Debug.Log("0.5f passed");
-        yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, 10, 2));
+        yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width, 2));
         Debug.Log("さあここからLoadScene!!!");
         SceneManager.LoadScene("init_menu");
         //Destroy(GameObject.Find("Init_Camera")); //初めのやつを消去？
@@ -73,9 +73,9 @@ public class cahngewall_3to2 : MonoBehaviour
         //camera.transform.position = new Vector3(0, 1.5f, 2.7f);
 
         yield return new WaitForSeconds(0.5f);
-        StartCoroutine(Relative_Line_move(obj: white_wall, 0, 10, 2));
+        StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width, 2));
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, 10, 2));
+        yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width, 2));
         menu_moving = false;
     }
 

@@ -105,7 +105,7 @@ public class menu : MonoBehaviour
     public void OnbackButtonOn()
     {
 
-        if(SceneManager.GetActiveScene().name == "init_menu")
+        if (SceneManager.GetActiveScene().name == "init_menu")
         {
             if (menu_moving == false && menus.transform.position.x! <= 0)
             {
@@ -117,17 +117,8 @@ public class menu : MonoBehaviour
 
                 }
             }
-        }else if(SceneManager.GetActiveScene().name == "Gacha")
-        {
-                back_treshhold_time += 0.5f;
-                if (back_treshhold_time > 1f)
-                {
-                    change_walls.GetComponent<change_wall>().change_3_2();
-                    back_treshhold_time = 0;
-
-                }
         }
-            
+       
         
     }
 
