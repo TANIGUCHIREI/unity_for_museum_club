@@ -10,6 +10,7 @@ public class change_wall : MonoBehaviour
     public GameObject white_wall;
     public GameObject camera;
     
+
     // Start is called before the first frame update
 
     void Awake()
@@ -19,14 +20,14 @@ public class change_wall : MonoBehaviour
     }
     void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         
     }
+
 
     public void change_2_3()
     {
@@ -49,7 +50,28 @@ public class change_wall : MonoBehaviour
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, 10, 2));
     }
 
-    
+
+    public void change_3_2()
+    {
+        //buttonではIEnumeratorがなんか見つからなかったからその対策用
+        StartCoroutine(menu_change3_to_2());
+    }
+    IEnumerator menu_change3_to_2()
+    {
+        StartCoroutine(Relative_Line_move(obj: black_wall, 0, 10, 2)); //yield returnしないとyiledしないのですぐに下の処理が始まる
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, 10, 2));
+        SceneManager.LoadScene("init_menu");
+        camera.GetComponent<Camera>().orthographic = false; //これすることで並行図法から透視図法になる
+        camera.GetComponent<Camera>().fieldOfView = 71;   //見た感じこれが最適解っぽい
+        //camera.transform.position = new Vector3(0, 1.5f, 2.7f);
+
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(Relative_Line_move(obj: white_wall, 0, 10, 2));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, 10, 2));
+    }
+
     //ポケモン風戦闘シーンから持ってきたやつ
     IEnumerator Relative_Line_move(GameObject obj, float angle, float length, float mov_time)
     {

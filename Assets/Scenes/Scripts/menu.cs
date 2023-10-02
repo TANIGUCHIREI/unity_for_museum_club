@@ -14,7 +14,12 @@ public class menu : MonoBehaviour
     public GameObject kansai_obj;
     public GameObject other_japan_obj;
 
+    public GameObject kansainomi;
+    public GameObject zenkoku;
+
     public GameObject japan_3Dmap;
+    public GameObject PopUpwindow;
+    public GameObject change_walls;
 
     public float back_treshhold_time = 0;
     public bool menu_moving = false; //連打して動いちゃわない用のやつ
@@ -28,6 +33,7 @@ public class menu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         Application.targetFrameRate = 60; //これで全体的に固定されるとか？→実際に固定された！必ず一度は通ることろにこれを置いておけばOK
 
         menu1.SetActive(true);
@@ -47,6 +53,10 @@ public class menu : MonoBehaviour
         japan_3Dmap.GetComponent<RectTransform>().anchoredPosition = new Vector3(Screen.width, 0, 0) + init_japn_pos;
         //menu3.GetComponent<RectTransform>().anchoredPosition = new Vector3(2*Screen.width, 0, 0);
         //普通のtransform.position指定ではrectTransformの値が全くおかしくなってしまったので、RectTransformを使用した
+
+        zenkoku.GetComponent<Animator>().SetBool("transparent", true); //これで全国というテキストを最初に半透明にしている！
+
+        change_walls = GameObject.Find("change_walls"); //なんか仏ーにserialized fielndからやっていると、シーン遷移の段階で消えてしまう
 
     }
 
@@ -94,15 +104,30 @@ public class menu : MonoBehaviour
 
     public void OnbackButtonOn()
     {
-        if(menu_moving == false && menus.transform.position.x! <= 0) {
-            back_treshhold_time += 0.5f;
-            if (back_treshhold_time > 1f)
-            {
-                menu_back();
-                back_treshhold_time = 0;
 
+        if(SceneManager.GetActiveScene().name == "init_menu")
+        {
+            if (menu_moving == false && menus.transform.position.x! <= 0)
+            {
+                back_treshhold_time += 0.5f;
+                if (back_treshhold_time > 1f)
+                {
+                    menu_back();
+                    back_treshhold_time = 0;
+
+                }
             }
+        }else if(SceneManager.GetActiveScene().name == "Gacha")
+        {
+                back_treshhold_time += 0.5f;
+                if (back_treshhold_time > 1f)
+                {
+                    change_walls.GetComponent<change_wall>().change_3_2();
+                    back_treshhold_time = 0;
+
+                }
         }
+            
         
     }
 
@@ -111,6 +136,9 @@ public class menu : MonoBehaviour
         kansai_obj.GetComponent<Animator>().SetBool("pop", false);
         other_japan_obj.GetComponent<Animator>().SetBool("pop", true);
 
+        kansainomi.GetComponent<Animator>().SetBool("transparent", true);
+        zenkoku.GetComponent<Animator>().SetBool("transparent", false);
+
     }
 
     public void OnAllJapnOn()
@@ -118,7 +146,20 @@ public class menu : MonoBehaviour
         kansai_obj.GetComponent<Animator>().SetBool("pop", true);
         other_japan_obj.GetComponent<Animator>().SetBool("pop",false);
 
+        
+        kansainomi.GetComponent<Animator>().SetBool("transparent", false);
+        zenkoku.GetComponent<Animator>().SetBool("transparent", true);
+
+
+        
     }
+
+    public void OnGoTomenu3Enter()
+    {
+        PopUpwindow.GetComponent<Animator>().SetBool("Popup", true);
+    }
+
+   
 
     IEnumerator menu_move(float speed)
     {
