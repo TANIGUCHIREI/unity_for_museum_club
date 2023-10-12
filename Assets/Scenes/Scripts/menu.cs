@@ -21,6 +21,8 @@ public class menu : MonoBehaviour
     public GameObject PopUpwindow;
     public GameObject change_walls;
 
+    public GameObject init_camera;
+
     public float back_treshhold_time = 0;
     public bool menu_moving = false; //連打して動いちゃわない用のやつ
 
@@ -57,6 +59,7 @@ public class menu : MonoBehaviour
         zenkoku.GetComponent<Animator>().SetBool("transparent", true); //これで全国というテキストを最初に半透明にしている！
 
         change_walls = GameObject.Find("change_walls"); //なんか仏ーにserialized fielndからやっていると、シーン遷移の段階で消えてしまう
+        init_camera = GameObject.Find("Init_Camera");
 
     }
 
@@ -67,7 +70,7 @@ public class menu : MonoBehaviour
         if(back_treshhold_time > 0)
         {
             back_treshhold_time -= 0.03f;
-            Debug.Log(back_treshhold_time);
+            //Debug.Log(back_treshhold_time);
         }
     }
 
@@ -130,6 +133,8 @@ public class menu : MonoBehaviour
         kansainomi.GetComponent<Animator>().SetBool("transparent", true);
         zenkoku.GetComponent<Animator>().SetBool("transparent", false);
 
+        init_camera.GetComponent<User_Input>()._is_kansai_only = false; //なんか逆に動くぞ・・・？まあいいか
+
     }
 
     public void OnAllJapnOn()
@@ -141,8 +146,10 @@ public class menu : MonoBehaviour
         kansainomi.GetComponent<Animator>().SetBool("transparent", false);
         zenkoku.GetComponent<Animator>().SetBool("transparent", true);
 
+        init_camera.GetComponent<User_Input>()._is_kansai_only = true;
 
-        
+
+
     }
 
     public void OnGoTomenu3Enter()
@@ -161,7 +168,7 @@ public class menu : MonoBehaviour
         Debug.Log("速度:" +  speed);
         while (Mathf.Abs(menus_position_x - init_x) < Screen.width)
         {
-            Debug.Log(Mathf.Abs(menus_position_x - init_x));
+            //Debug.Log(Mathf.Abs(menus_position_x - init_x));
             //Debug.Log(menus.GetComponent<RectTransform>().anchoredPosition.x);
             menus.GetComponent<RectTransform>().Translate(speed, 0, 0);
             menus_position_x = menus.GetComponent<RectTransform>().anchoredPosition.x;

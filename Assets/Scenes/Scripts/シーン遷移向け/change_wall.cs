@@ -8,7 +8,7 @@ public class change_wall : MonoBehaviour
 
     public GameObject black_wall;
     public GameObject white_wall;
-    public GameObject camera;
+    public GameObject init_camera;
     public float move_time = 2f;
     public float screen_width = 0f;
 
@@ -17,7 +17,7 @@ public class change_wall : MonoBehaviour
     void Awake()
     {
         //DontDestroyOnLoad(gameObject);
-        DontDestroyOnLoad(camera);
+        DontDestroyOnLoad(init_camera);
         //black_wall.GetComponent<RectTransform>().offsetMax = new Vector2(right, top);
         //white_wall.GetComponent<RectTransform>(). = new Vector3(Screen.width, 0, 0);
         screen_width = Screen.width;
@@ -41,18 +41,20 @@ public class change_wall : MonoBehaviour
     }
     IEnumerator menu_change2_to_3()
     {
-        StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
+        StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width, move_time));
+        yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width + 100, move_time));
         SceneManager.LoadScene("Gacha");
-        camera.GetComponent<Camera>().orthographic = false; //これすることで並行図法から透視図法になる
+        init_camera.GetComponent<Camera>().orthographic = false; //これすることで並行図法から透視図法になる
+
+        Debug.Log(init_camera.GetComponent<User_Input>().userinput_text);
         //camera.GetComponent<Camera>().fieldOfView = 71;   //見た感じこれが最適解っぽい
         //camera.transform.position = new Vector3(0, 1.5f, 2.7f);
 
         yield return new WaitForSeconds(0.5f);
-         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width, move_time));
+         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width, move_time));
+        yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
     }
 
 
