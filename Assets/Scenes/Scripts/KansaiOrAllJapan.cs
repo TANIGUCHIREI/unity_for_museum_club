@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Shapes2D;
-public class test : MonoBehaviour
+public class KansaiOrAllJapan : MonoBehaviour
 {
     public GameObject kansai_button;
     public GameObject all_japan_button;
     public float  outlinesize = 10;
 
-    bool kansai_check_is_on = true;
+    public bool kansai_check_is_on = true;
     bool all_japan_check_is_on = false;
 
     // Start is called before the first frame update

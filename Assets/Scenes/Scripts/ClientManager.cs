@@ -20,20 +20,17 @@ public class ClientManager : MonoBehaviour
     //public Button sendButton;
     //public InputField messageInput;
 
-    public string user_input = "おまかせでお願いします。";
     public Dictionary<string, string> user_input_dict = new Dictionary<string, string>();
 
     public string userinput_text;
-    public bool _is_kansai_only;
+    public bool _is_kansai_only =true;
 
     public  string IPAdress = "127.0.0.1"; //この辺はSettingMenuにて代わります
     public  string Port = "8001";
 
     void Start()
     {
-
-        userinput_text = gameObject.GetComponent<User_Input>().userinput_text; //gameObject.GetComponent<>()は参照を返すため、その後の変更も反映されます。bygpt4
-        _is_kansai_only = gameObject.GetComponent<User_Input>()._is_kansai_only;
+   
 
         //接続処理。接続先サーバと、ポート番号を指定する
         //送信ボタンが押されたときに実行する処理「SendText」を登録する
@@ -113,7 +110,7 @@ public class ClientManager : MonoBehaviour
 
         }else if (Recv_Type == "COM_TEST")
         {
-            string Response_from_Python = (string)recv_dict["RESPONSE"];
+            string Response_from_Python = (string)recv_dict["RESPONSE"]; //表示はここ（別スレッド）ではできませんので変更して、Update内で表示を行っている
             Debug.Log(Response_from_Python);
         }
     }
