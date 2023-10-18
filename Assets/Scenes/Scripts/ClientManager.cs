@@ -26,8 +26,8 @@ public class ClientManager : MonoBehaviour
     public string userinput_text;
     public bool _is_kansai_only;
 
-    public static string IPAdress = PlayerPrefs.GetString("IPAdress","localhost");
-    public static string Port = PlayerPrefs.GetString("Port", "8001");
+    public  string IPAdress = "127.0.0.1"; //この辺はSettingMenuにて代わります
+    public  string Port = "8001";
 
     void Start()
     {
@@ -36,36 +36,16 @@ public class ClientManager : MonoBehaviour
         _is_kansai_only = gameObject.GetComponent<User_Input>()._is_kansai_only;
 
         //接続処理。接続先サーバと、ポート番号を指定する
-        Test_CoMwithPython();
         //送信ボタンが押されたときに実行する処理「SendText」を登録する
         //endButton.onClick.AddListener(SendText);
 
         //サーバからメッセージを受信したときに実行する処理「RecvText」を登録する
-        ws.OnMessage += (sender, e) => RecvFromPython(e.RawData);
-        //サーバとの接続が切れたときに実行する処理「RecvClose」を登録する
-        ws.OnClose += (sender, e) => RecvClose();
-
+        
 
     }
 
     
-    public void Test_CoMwithPython()
-    {
-        try {
-            Debug.Log("try to connetct to " + "ws://" + IPAdress + ":" + Port + "/");
-            ws = new WebSocket("ws://" + IPAdress + ":" + Port + "/");
-            ws.Connect();
-
-            user_input_dict = new Dictionary<string, string> { { "TYPE", "COM_TEST" } };
-            string json = JsonConvert.SerializeObject(user_input_dict);
-            byte[] json_bytes = Encoding.UTF8.GetBytes(json);
-            ws.Send(json_bytes);
-        }catch (System.InvalidOperationException e)
-        {
-            Debug.Log("接続先がオープンされていません！");
-        }
-        
-    }
+    
     public void OnSendPython()
     {
         string send_word = CreateInput();
@@ -80,20 +60,23 @@ public class ClientManager : MonoBehaviour
         }
         else
         {
-            input += userinput_text;
+            input = userinput_text;
         }
-        if (_is_kansai_only)
-        {
-            input += "\nただ、場所は絶対に関西(大阪・兵庫・京都・奈良・和歌山・滋賀のどこか)でお願いします。";
-        }
-    
+
+
         return input;
     }
     public void SendToPython(string user_input)
 
     {
-        //ws.Send(messageInput.text);
-        user_input_dict = new Dictionary<string, string> { { "TYPE", "USER_INPUT" } ,{ "user_input", user_input } };
+        Debug.Log("try to connetct to " + "ws://" + IPAdress + ":" + Port + "/");
+        ws = new WebSocket("ws://" + IPAdress + ":" + Port + "/");
+        ws.OnMessage += (sender, e) => RecvFromPython(e.RawData);
+        //サーバとの接続が切れたときに実行する処理「RecvClose」を登録する
+        ws.OnClose += (sender, e) => RecvClose();
+
+        ws.Connect();
+        user_input_dict = new Dictionary<string, string> { { "TYPE", "USER_INPUT" } ,{ "user_input", user_input },{ "_is_kansai_only",_is_kansai_only.ToString() } };
         string json = JsonConvert.SerializeObject(user_input_dict);
         byte[] json_bytes = Encoding.UTF8.GetBytes(json);
         ws.Send(json_bytes);

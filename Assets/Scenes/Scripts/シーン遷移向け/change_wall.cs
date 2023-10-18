@@ -9,6 +9,8 @@ public class change_wall : MonoBehaviour
     public GameObject black_wall;
     public GameObject white_wall;
     public GameObject init_camera;
+
+   
     public float move_time = 2f;
     public float screen_width = 0f;
 
@@ -39,6 +41,17 @@ public class change_wall : MonoBehaviour
         //buttonではIEnumeratorがなんか見つからなかったからその対策用
         StartCoroutine(menu_change2_to_3());
     }
+
+    public void change_2_setting()
+    {
+        //buttonではIEnumeratorがなんか見つからなかったからその対策用
+        StartCoroutine(menu_change2_to_Setting());
+    }
+
+    public void change_setting_to_menu()
+    {
+        StartCoroutine(change_setting2_to_menu());
+    }
     IEnumerator menu_change2_to_3()
     {
         StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
@@ -53,6 +66,47 @@ public class change_wall : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
          StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
+    }
+
+    IEnumerator menu_change2_to_Setting()
+    {
+        Debug.Log("設定画面へ遷移します！" + " この名前は" +gameObject.name);
+        StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width + 100, move_time));
+        SceneManager.LoadScene("Setting_Menu");
+        //init_camera.GetComponent<Camera>().orthographic = false; //これすることで並行図法から透視図法になる settingへの遷移ではこれはいらない
+
+        //Debug.Log(init_camera.GetComponent<User_Input>().userinput_text);
+        //camera.GetComponent<Camera>().fieldOfView = 71;   //見た感じこれが最適解っぽい
+        //camera.transform.position = new Vector3(0, 1.5f, 2.7f);
+        
+        yield return new WaitForSeconds(0.5f);
+        GameObject Main_Camaera = GameObject.Find("Main Camera"); //LoadSceneの直後だと動かなかった。ここだと動いた
+        Debug.Log(" menu_change2_to_Setting");
+        Main_Camaera.SetActive(false);
+        StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
+    }
+
+    IEnumerator change_setting2_to_menu()
+    {
+        StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width + 100, move_time));
+        SceneManager.LoadScene("init_menu");
+        //init_camera.GetComponent<Camera>().orthographic = false; //これすることで並行図法から透視図法になる settingへの遷移ではこれはいらない
+
+        //Debug.Log(init_camera.GetComponent<User_Input>().userinput_text);
+        //camera.GetComponent<Camera>().fieldOfView = 71;   //見た感じこれが最適解っぽい
+        //camera.transform.position = new Vector3(0, 1.5f, 2.7f);
+
+        yield return new WaitForSeconds(0.5f);
+       
+        StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
     }

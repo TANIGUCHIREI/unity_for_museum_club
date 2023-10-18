@@ -14,7 +14,7 @@ public class Button_AddListner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        testBtn = gameObject.GetComponent<Button>();
+        testBtn = gameObject.GetComponent<Button>(); //このボタンのこと
         GameObject changewall = GameObject.Find("Change_walls_UI");
         testBtn.onClick.AddListener(changewall.GetComponent<change_wall>().change_2_3); //これでシーン遷移でinit_menuに戻ったとしてもボタンのクリック時のスクリプトに登録される？
         init_camera = GameObject.Find("Init_Camera");
@@ -35,5 +35,7 @@ public class Button_AddListner : MonoBehaviour
         //Debug.Log(Text.GetComponent<Text>().text);
         //Debug.Log(input.text);
         init_camera.GetComponent<User_Input>().userinput_text = input.text;
+
+        init_camera.GetComponent<ClientManager>().OnSendPython(); //テストでどうなるか動かしてみる！
     }
 }
