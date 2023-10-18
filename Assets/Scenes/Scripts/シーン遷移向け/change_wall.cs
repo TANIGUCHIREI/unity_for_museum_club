@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 public class change_wall : MonoBehaviour
 {
@@ -63,9 +65,24 @@ public class change_wall : MonoBehaviour
         Debug.Log(init_camera.GetComponent<User_Input>().userinput_text);
         //camera.GetComponent<Camera>().fieldOfView = 71;   //見た感じこれが最適解っぽい
         //camera.transform.position = new Vector3(0, 1.5f, 2.7f);
+      
+
 
         yield return new WaitForSeconds(0.5f);
-         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
+
+        GameObject User_Input_Text = GameObject.Find("User_Input_Text"); //ここからの処理でUserInputがガチャの入力用紙に反映されるようにする、Wwaitの後に置かないとNullReferenceになる！
+        string userinput_text = init_camera.GetComponent<ClientManager>().userinput_text;
+        User_Input_Text.GetComponent<TMP_Text>().text = "「" + userinput_text + "」\n";
+        if (init_camera.GetComponent<ClientManager>()._is_kansai_only)
+        {
+            User_Input_Text.GetComponent<TMP_Text>().text += "in関西";
+        }
+        else
+        {
+            User_Input_Text.GetComponent<TMP_Text>().text += "in日本全国";
+        }
+
+        StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
     }
