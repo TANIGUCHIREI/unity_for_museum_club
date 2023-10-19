@@ -8,6 +8,8 @@ using WebSocketSharp.Net;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks; //非同期にwebsocketでつうしんを行うためのもの
+using TMPro;
 
 public class ClientManager : MonoBehaviour
 {
@@ -28,25 +30,47 @@ public class ClientManager : MonoBehaviour
     public  string IPAdress = "127.0.0.1"; //この辺はSettingMenuにて代わります
     public  string Port = "8001";
 
+    public GameObject menu1_Blined_Panel;
+    public TMP_Text Status_Text;
+
     void Start()
     {
-   
+        Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
+        //Status_Text.text = "";
+        menu1_Blined_Panel = GameObject.Find("menu1_Blined_Panel");
+        menu1_Blined_Panel.GetComponent<Image>().raycastTarget = true; //はじめはメニューが動かないように
+        async_SendPython(Type :"Init_Connection");
 
-        //接続処理。接続先サーバと、ポート番号を指定する
-        //送信ボタンが押されたときに実行する処理「SendText」を登録する
-        //endButton.onClick.AddListener(SendText);
 
-        //サーバからメッセージを受信したときに実行する処理「RecvText」を登録する
-        
+
 
     }
 
-    
-    
-    public void OnSendPython()
+
+    public void OnButtonClick()
     {
-        string send_word = CreateInput();
-        SendToPython(send_word);
+        async_SendPython(); //ラッパー関数を使ってasyncをバックグラウンドで動作させる。これで動作がなめらかになる
+    }
+
+
+    public async void async_SendPython(string Type = null)
+    {
+        if(Type == "Init_Connection")
+        {
+            //メニュー１にて（つまり初回起動時とか）ws connectできるかどうかの確認
+
+            bool _is_ConnectSuccess = await Init_Test_CoMwithPython(); //初回画面にて接続に成功したら次の画面に行ける、ムリポなら設定しかいけない
+
+            if (_is_ConnectSuccess)
+            {
+                menu1_Blined_Panel.GetComponent<Image>().raycastTarget = false; //接続に成功したら次の画面に行けるようにする！
+            }
+        }
+        else{
+            string send_word = CreateInput();
+            await SendToPython(send_word);
+        }
+        
     }
 
     public string CreateInput()
@@ -63,20 +87,61 @@ public class ClientManager : MonoBehaviour
 
         return input;
     }
-    public void SendToPython(string user_input)
+    public async Task SendToPython(string user_input)
 
     {
-        Debug.Log("try to connetct to " + "ws://" + IPAdress + ":" + Port + "/");
-        ws = new WebSocket("ws://" + IPAdress + ":" + Port + "/");
-        ws.OnMessage += (sender, e) => RecvFromPython(e.RawData);
-        //サーバとの接続が切れたときに実行する処理「RecvClose」を登録する
-        ws.OnClose += (sender, e) => RecvClose();
 
-        ws.Connect();
+
+        Debug.Log("try to connetct to " + "ws://" + IPAdress + ":" + Port + "/");
+        //ws = new WebSocket("ws://" + IPAdress + ":" + Port + "/");
+        //ws.OnMessage += (sender, e) => RecvFromPython(e.RawData);
+        //サーバとの接続が切れたときに実行する処理「RecvClose」を登録する
+        //ws.OnClose += (sender, e) => RecvClose();
+
+        await Task.Run(() =>  ws.Connect());
         user_input_dict = new Dictionary<string, string> { { "TYPE", "USER_INPUT" } ,{ "user_input", user_input },{ "_is_kansai_only",_is_kansai_only.ToString() } };
         string json = JsonConvert.SerializeObject(user_input_dict);
         byte[] json_bytes = Encoding.UTF8.GetBytes(json);
         ws.Send(json_bytes);
+    }
+
+
+
+    public async Task<bool> Init_Test_CoMwithPython()
+    {
+        Debug.Log("Init_Test_COmwithPython が動作を開始しました");
+
+        try
+        {
+            //ws.Close(); //はじめにあったやつを消す
+            Debug.Log("trying to connetct to " + "ws://" + IPAdress + ":" + Port + "/");
+            ws = new WebSocket("ws://" + IPAdress + ":" + Port + "/");
+            //サーバからメッセージを受信したときに実行する処理「RecvText」を登録する
+            ws.OnMessage += (sender, e) => RecvFromPython(e.RawData);
+            //サーバとの接続が切れたときに実行する処理「RecvClose」を登録する
+            ws.OnClose += (sender, e) => RecvClose();
+
+            //↑はwsを新しく作るたびに定義する必要があるのではないか？
+            await Task.Run(() => ws.Connect()); // ここを非同期に変更
+
+            user_input_dict = new Dictionary<string, string> { { "TYPE", "COM_TEST" } };
+            string json = JsonConvert.SerializeObject(user_input_dict);
+            byte[] json_bytes = Encoding.UTF8.GetBytes(json);
+            ws.Send(json_bytes);
+            Debug.Log("Sent a Message");
+            Status_Text.text = "";
+            return true;
+        }
+        catch (System.InvalidOperationException e)
+        {
+            Debug.Log("接続先がオープンされていません！");
+            Status_Text.text = "Cannot Connect To the Server ! \nPlease Check the Setting";
+
+            return false;
+
+        }
+
+
     }
 
     //サーバから受け取ったメッセージを、ChatTextに表示する

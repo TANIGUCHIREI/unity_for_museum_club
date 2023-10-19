@@ -10,6 +10,7 @@ public class change_wall : MonoBehaviour
 
     public GameObject black_wall;
     public GameObject white_wall;
+    public GameObject Blined_Panel; //これで操作中のタップを防止する。これのRayCast Targetを調整
     public GameObject init_camera;
 
    
@@ -29,6 +30,7 @@ public class change_wall : MonoBehaviour
     void Start()
     {
         //Debug.Log(Screen.width);
+        Blined_Panel.GetComponent<Image>().raycastTarget = false;
     }
 
     // Update is called once per frame
@@ -53,9 +55,12 @@ public class change_wall : MonoBehaviour
     public void change_setting_to_menu()
     {
         StartCoroutine(change_setting2_to_menu());
+        
     }
     IEnumerator menu_change2_to_3()
     {
+        Blined_Panel.GetComponent<Image>().raycastTarget = true;
+
         StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width + 100, move_time));
@@ -85,10 +90,12 @@ public class change_wall : MonoBehaviour
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
+        Blined_Panel.GetComponent<Image>().raycastTarget = false;
     }
 
     IEnumerator menu_change2_to_Setting()
     {
+        Blined_Panel.GetComponent<Image>().raycastTarget = true;
         Debug.Log("設定画面へ遷移します！" + " この名前は" +gameObject.name);
         StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
         yield return new WaitForSeconds(0.5f);
@@ -107,10 +114,14 @@ public class change_wall : MonoBehaviour
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
+
+        Blined_Panel.GetComponent<Image>().raycastTarget = false;
     }
 
     IEnumerator change_setting2_to_menu()
     {
+        Blined_Panel.GetComponent<Image>().raycastTarget = true;
+
         StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width + 100, move_time));
@@ -126,6 +137,14 @@ public class change_wall : MonoBehaviour
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
+
+        Blined_Panel.GetComponent<Image>().raycastTarget = false;
+
+
+        init_camera.GetComponent<ClientManager>().Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
+        init_camera.GetComponent<ClientManager>().menu1_Blined_Panel = GameObject.Find("menu1_Blined_Panel"); //Sceneが切り替わるたびにdestroyed扱いになるのでその都度設定してあげる必要がある
+        init_camera.GetComponent<ClientManager>().menu1_Blined_Panel.GetComponent<Image>().raycastTarget = true; //はじめはメニューが動かないように
+        init_camera.GetComponent<ClientManager>().async_SendPython(Type: "Init_Connection"); //メニュー１に戻るたびに接続がきちんとできるか確認する
     }
 
 

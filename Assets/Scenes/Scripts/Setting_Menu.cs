@@ -79,7 +79,7 @@ public class Setting_Menu : MonoBehaviour
         try
         {
             //ws.Close(); //はじめにあったやつを消す
-            Debug.Log("try to connetct to " + "ws://" + IPAdress + ":" + Port + "/");
+            Debug.Log("trying to connetct to " + "ws://" + IPAdress + ":" + Port + "/");
             ws = new WebSocket("ws://" + IPAdress + ":" + Port + "/");
             show_text = "try to connetct to " + "ws://" + IPAdress + ":" + Port + "/";
             //サーバからメッセージを受信したときに実行する処理「RecvText」を登録する

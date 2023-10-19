@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 public class cahngewall_3to2 : MonoBehaviour
 {
     public GameObject black_wall;
@@ -74,10 +77,19 @@ public class cahngewall_3to2 : MonoBehaviour
         //camera.transform.position = new Vector3(0, 1.5f, 2.7f);
 
         yield return new WaitForSeconds(0.5f);
+
+        init_camera.GetComponent<ClientManager>().Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
+        init_camera.GetComponent<ClientManager>().menu1_Blined_Panel = GameObject.Find("menu1_Blined_Panel"); //Sceneが切り替わるたびにdestroyed扱いになるのでその都度設定してあげる必要がある
+        init_camera.GetComponent<ClientManager>().menu1_Blined_Panel.GetComponent<Image>().raycastTarget = true; //はじめはメニューが動かないように
+        init_camera.GetComponent<ClientManager>().async_SendPython(Type: "Init_Connection"); //メニュー１に戻るたびに接続がきちんとできるか確認する
+
+
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, 2));
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, 2));
         menu_moving = false;
+
+
     }
 
     IEnumerator Relative_Line_move(GameObject obj, float angle, float length, float mov_time)

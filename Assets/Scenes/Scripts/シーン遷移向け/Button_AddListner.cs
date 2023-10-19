@@ -49,6 +49,6 @@ public class Button_AddListner : MonoBehaviour
         //Debug.Log(Text.GetComponent<Text>().text);
         //Debug.Log(input.text);
         init_camera.GetComponent<ClientManager>()._is_kansai_only = JapanUI.GetComponent<KansaiOrAllJapan>().kansai_check_is_on; //ボタンのTrueかFalseを反映
-        init_camera.GetComponent<ClientManager>().OnSendPython(); //テストでどうなるか動かしてみる！
+        init_camera.GetComponent<ClientManager>().async_SendPython(); //テストでどうなるか動かしてみる！
     }
 }
