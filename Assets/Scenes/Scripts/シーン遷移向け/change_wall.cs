@@ -111,6 +111,14 @@ public class change_wall : MonoBehaviour
         GameObject Main_Camaera = GameObject.Find("Main Camera"); //LoadSceneの直後だと動かなかった。ここだと動いた
         Debug.Log(" menu_change2_to_Setting");
         Main_Camaera.SetActive(false);
+
+        //次に前の設定の反映を個々で行う
+        GameObject Inputfield_IPAdress = GameObject.Find("InputField_IPAdress");
+        GameObject InputField_Port = GameObject.Find("InputField_Port");
+        GameObject StandAloneModeToggle = GameObject.Find("StandAloneModeToggle");
+        Inputfield_IPAdress.GetComponent<TMP_InputField>().text = init_camera.GetComponent<ClientManager>().IPAdress;
+        InputField_Port.GetComponent<TMP_InputField>().text = init_camera.GetComponent<ClientManager>().Port;
+        StandAloneModeToggle.GetComponent<Toggle>().isOn = init_camera.GetComponent<ClientManager>()._isStandAloneModeOne;
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
@@ -140,11 +148,11 @@ public class change_wall : MonoBehaviour
 
         Blined_Panel.GetComponent<Image>().raycastTarget = false;
 
-
-        init_camera.GetComponent<ClientManager>().Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
-        init_camera.GetComponent<ClientManager>().menu1_Blined_Panel = GameObject.Find("menu1_Blined_Panel"); //Sceneが切り替わるたびにdestroyed扱いになるのでその都度設定してあげる必要がある
-        init_camera.GetComponent<ClientManager>().menu1_Blined_Panel.GetComponent<Image>().raycastTarget = true; //はじめはメニューが動かないように
-        init_camera.GetComponent<ClientManager>().async_SendPython(Type: "Init_Connection"); //メニュー１に戻るたびに接続がきちんとできるか確認する
+        init_camera.GetComponent<ClientManager>().Start_func(); //これ１つにまとめました!
+        //init_camera.GetComponent<ClientManager>().Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
+        //init_camera.GetComponent<ClientManager>().menu1_Blined_Panel = GameObject.Find("menu1_Blined_Panel"); //Sceneが切り替わるたびにdestroyed扱いになるのでその都度設定してあげる必要がある
+        //init_camera.GetComponent<ClientManager>().menu1_Blined_Panel.GetComponent<Image>().raycastTarget = true; //はじめはメニューが動かないように
+        //init_camera.GetComponent<ClientManager>().async_SendPython(Type: "Init_Connection"); //メニュー１に戻るたびに接続がきちんとできるか確認する
     }
 
 

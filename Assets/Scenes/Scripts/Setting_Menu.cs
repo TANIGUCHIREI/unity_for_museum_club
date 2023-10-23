@@ -20,6 +20,7 @@ public class Setting_Menu : MonoBehaviour
     public WebSocket ws;
     GameObject Input_IPAdress;
     GameObject Input_Port;
+    public GameObject StandAloneModeToggle;
 
     public TMP_Text Status_Text;
     public string show_text = "Connection Status will be mentioned Here..."; //websocketは別スレッドで動くのでgameobjectを直接操作できないしエラーも出ない（たしか）そのためのバッファー的なやつ
@@ -37,7 +38,7 @@ public class Setting_Menu : MonoBehaviour
         Input_IPAdress = GameObject.Find("InputField_IPAdress");
         Input_Port = GameObject.Find("InputField_Port");
         //Debug.Log(Input_IPAdress.name);
-
+        StandAloneModeToggle = GameObject.Find("StandAloneModeToggle");
         Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
         
         //Debug.Log("ws://" + IPAdress + ":" + Port + "/");
@@ -57,6 +58,7 @@ public class Setting_Menu : MonoBehaviour
         Change_walls_UI.GetComponent<change_wall>().change_setting_to_menu();
         Init_Camera.GetComponent<ClientManager>().IPAdress = IPAdress;
         Init_Camera.GetComponent<ClientManager>().Port = Port;
+        Init_Camera.GetComponent<ClientManager>()._isStandAloneModeOne = StandAloneModeToggle.GetComponent<Toggle>().isOn;
     }
 
     public void OnButtonClick()

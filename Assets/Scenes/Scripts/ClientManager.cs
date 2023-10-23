@@ -30,23 +30,37 @@ public class ClientManager : MonoBehaviour
     public  string IPAdress = "127.0.0.1"; //この辺はSettingMenuにて代わります
     public  string Port = "8001";
 
-    public GameObject menu1_Blined_Panel;
+    public GameObject menu1_Blined_Panel; //ここの設定された値は、change_wall.cs内でシーン遷移時に設定側に反映されるように設定しています。逆もしかり？
     public TMP_Text Status_Text;
 
+    public bool _isStandAloneModeOne = false; //これがOnであるときは通信がいらない、というかテストモードになる
+
     void Start()
+    {
+
+        Start_func();
+
+    }
+
+    public void Start_func()
     {
         Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
         //Status_Text.text = "";
         menu1_Blined_Panel = GameObject.Find("menu1_Blined_Panel");
         menu1_Blined_Panel.GetComponent<Image>().raycastTarget = true; //はじめはメニューが動かないように
-        async_SendPython(Type :"Init_Connection");
 
+        if (_isStandAloneModeOne)
+        {
+            //通信をしないモード
+            menu1_Blined_Panel.GetComponent<Image>().raycastTarget = false; //接続に成功したら次の画面に行けるようにする！
+            Status_Text.text = "Stand Alone Mode";
 
-
-
+        }
+        else
+        {
+            async_SendPython(Type: "Init_Connection");
+        }
     }
-
-
     public void OnButtonClick()
     {
         async_SendPython(); //ラッパー関数を使ってasyncをバックグラウンドで動作させる。これで動作がなめらかになる
@@ -159,12 +173,23 @@ public class ClientManager : MonoBehaviour
             //Debug.Log("クエリだよ");
             //Debug.Log(dictionary["QUERY"].GetType());
             List<string> QUERY = (recv_dict["QUERY"] as JArray).ToObject<List<string>>();
+
+            //此処から先はGachaシーンに移行していることを念頭に考えている
+            GameObject Gacha_Event = GameObject.Find("Gacha_Event");
+            Gacha_Event.GetComponent<Gacha_Controller>().QUERY = QUERY;
+            Gacha_Event.GetComponent<Gacha_Controller>().StartCoroutine("Create_Query_Text_Bbble");
+            //↑についてhttps://mono-pro.net/archives/9029が参考になりました
+            //わかった・・・・コルーチンはここ（別スレッド）じゃきどうできないわけだアホが
+
+
             foreach (var word in QUERY)
             {
                 Debug.Log(word);
             }
             
-        }else if (Recv_Type == "ANSWER")
+
+        }
+        else if (Recv_Type == "ANSWER")
         {
             string prefecture = (string) recv_dict["prefecture"];
             string museum_name = (string)recv_dict["museum_name"];

@@ -16,8 +16,11 @@ public class Gacha_Controller : MonoBehaviour
     AudioSource audioSource;
 
     public GameObject SpotLight;
+    public List<string> QUERY = new List<string>() { "これは", "テスト用の", "クエリーです！！！", "まぁどんなものが", "くるのか", "わかりませんけど", "こまっちまう", "ネタ切れ", "のび太", "hogehoge", "querys" };
 
-    // Start is called before the first frame update
+    public GameObject Query_Text_Instance;
+
+
     void Start()
     {
         camera0 = GameObject.Find("Init_Camera"); //�͂��߂�������p���ꂽ���
@@ -32,6 +35,7 @@ public class Gacha_Controller : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         StartCoroutine(Camera_Motion());
+        //StartCoroutine(Create_Query_Text_Bbble());
     }
 
     // Update is called once per frame
@@ -41,6 +45,21 @@ public class Gacha_Controller : MonoBehaviour
         
     }
 
+    public IEnumerator Create_Query_Text_Bbble()
+    {
+  
+        Debug.Log("Create_Queryは動いています");
+        foreach (string query in QUERY)
+        {
+            GameObject Instantiate_Query = Instantiate(Query_Text_Instance);
+            Instantiate_Query.GetComponent<Query_Text>().query_text = query;
+            Instantiate_Query.transform.parent = GameObject.Find("Query_Canvas").transform;
+            float Scale = Random.Range(7f, 15f);
+            Instantiate_Query.GetComponent<RectTransform>().localScale = new Vector3(Scale, Scale, Scale);
+            Instantiate_Query.GetComponent<TypefaceAnimator>().positionTo = new Vector3(0, Random.Range(2f, 5f), 0);
+            yield return new WaitForSeconds(Random.Range(2f, 4f));
+        }
+    }
     IEnumerator Camera_Motion()
     {
         yield return new WaitForSeconds(4.0f);
