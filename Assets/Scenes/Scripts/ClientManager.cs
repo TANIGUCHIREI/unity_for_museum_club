@@ -35,6 +35,8 @@ public class ClientManager : MonoBehaviour
 
     public bool _isStandAloneModeOne = false; //これがOnであるときは通信がいらない、というかテストモードになる
 
+    public List<string> QUERY_Buffer = new List<string>(); //これは別スレッドのWebsocketClientからこれを操作し、さらにメインスレッドのここでGetcompomentでGachatControllerを操作するようのやつ
+    public bool _isQueryArrive = false;
     void Start()
     {
 
@@ -42,6 +44,19 @@ public class ClientManager : MonoBehaviour
 
     }
 
+    private void FixedUpdate()
+    {
+        if (_isQueryArrive)
+        {
+
+            Debug.Log("ClientManagerからGachaControllerに送信");
+            GameObject Gacha_Event = GameObject.Find("Gacha_Event");
+            Gacha_Event.GetComponent<Gacha_Controller>().QUERY = QUERY_Buffer;
+            Gacha_Event.GetComponent<Gacha_Controller>()._isQueryArrive = true;
+            _isQueryArrive = false;
+            //↑についてhttps://mono-pro.net/archives/9029が参考になりました
+        }
+    }
     public void Start_func()
     {
         Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
@@ -63,27 +78,36 @@ public class ClientManager : MonoBehaviour
     }
     public void OnButtonClick()
     {
-        async_SendPython(); //ラッパー関数を使ってasyncをバックグラウンドで動作させる。これで動作がなめらかになる
+   
+         async_SendPython(); //ラッパー関数を使ってasyncをバックグラウンドで動作させる。これで動作がなめらかになる
+   
     }
 
 
     public async void async_SendPython(string Type = null)
     {
-        if(Type == "Init_Connection")
+
+        if (_isStandAloneModeOne == false)
         {
-            //メニュー１にて（つまり初回起動時とか）ws connectできるかどうかの確認
-
-            bool _is_ConnectSuccess = await Init_Test_CoMwithPython(); //初回画面にて接続に成功したら次の画面に行ける、ムリポなら設定しかいけない
-
-            if (_is_ConnectSuccess)
+            //スタンドアロンモードならこの先の操作は実行しない！
+            if (Type == "Init_Connection")
             {
-                menu1_Blined_Panel.GetComponent<Image>().raycastTarget = false; //接続に成功したら次の画面に行けるようにする！
+                //メニュー１にて（つまり初回起動時とか）ws connectできるかどうかの確認
+
+                bool _is_ConnectSuccess = await Init_Test_CoMwithPython(); //初回画面にて接続に成功したら次の画面に行ける、ムリポなら設定しかいけない
+
+                if (_is_ConnectSuccess)
+                {
+                    menu1_Blined_Panel.GetComponent<Image>().raycastTarget = false; //接続に成功したら次の画面に行けるようにする！
+                }
+            }
+            else
+            {
+                string send_word = CreateInput();
+                await SendToPython(send_word);
             }
         }
-        else{
-            string send_word = CreateInput();
-            await SendToPython(send_word);
-        }
+        
         
     }
 
@@ -175,18 +199,19 @@ public class ClientManager : MonoBehaviour
             List<string> QUERY = (recv_dict["QUERY"] as JArray).ToObject<List<string>>();
 
             //此処から先はGachaシーンに移行していることを念頭に考えている
-            GameObject Gacha_Event = GameObject.Find("Gacha_Event");
-            Gacha_Event.GetComponent<Gacha_Controller>().QUERY = QUERY;
-            Gacha_Event.GetComponent<Gacha_Controller>().StartCoroutine("Create_Query_Text_Bbble");
-            //↑についてhttps://mono-pro.net/archives/9029が参考になりました
-            //わかった・・・・コルーチンはここ（別スレッド）じゃきどうできないわけだアホが
-
-
+            
             foreach (var word in QUERY)
             {
                 Debug.Log(word);
             }
             
+            Debug.Log("クエリClientManager受信");
+            QUERY_Buffer = QUERY; //まずはバッファーに保存する
+            _isQueryArrive = true;
+            //わかった・・・・コルーチンはここ（別スレッド）じゃきどうできないわけだアホ＆GetComponentのようなUnityコンポーネントやAPIを扱うことは別スレッドじゃ無理！
+
+
+
 
         }
         else if (Recv_Type == "ANSWER")

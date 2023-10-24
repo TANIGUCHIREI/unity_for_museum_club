@@ -75,16 +75,23 @@ public class change_wall : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        GameObject User_Input_Text = GameObject.Find("User_Input_Text"); //ここからの処理でUserInputがガチャの入力用紙に反映されるようにする、Wwaitの後に置かないとNullReferenceになる！
+        //GameObject User_Input_Text = GameObject.Find("User_Input_Text"); //ここからの処理でUserInputがガチャの入力用紙に反映されるようにする、Wwaitの後に置かないとNullReferenceになる！
         string userinput_text = init_camera.GetComponent<ClientManager>().userinput_text;
-        User_Input_Text.GetComponent<TMP_Text>().text = "「" + userinput_text + "」\n";
+        //User_Input_Text.GetComponent<TMP_Text>().text = "「" + userinput_text + "」\n";
+
+        GameObject Gacha_Insert_Paper = GameObject.Find("Gacha_Insert_Papaer");
+        Gacha_Insert_Paper.GetComponent<Gacha_Insert_Paper>().Text = "「" + userinput_text + "」\n"; //ペーパーに直接反映するとエラーが生じたので代わりにこのようにした
+        
+        //User_Input_Text.SetActive(false);
         if (init_camera.GetComponent<ClientManager>()._is_kansai_only)
         {
-            User_Input_Text.GetComponent<TMP_Text>().text += "in関西";
+            //User_Input_Text.GetComponent<TMP_Text>().text += "in関西";
+            Gacha_Insert_Paper.GetComponent<Gacha_Insert_Paper>().Text += "in関西";
         }
         else
         {
-            User_Input_Text.GetComponent<TMP_Text>().text += "in日本全国";
+            //User_Input_Text.GetComponent<TMP_Text>().text += "in日本全国";
+            Gacha_Insert_Paper.GetComponent<Gacha_Insert_Paper>().Text += "in日本全国";
         }
 
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
