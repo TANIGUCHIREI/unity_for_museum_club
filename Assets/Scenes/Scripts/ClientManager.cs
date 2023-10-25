@@ -27,7 +27,7 @@ public class ClientManager : MonoBehaviour
     public string userinput_text;
     public bool _is_kansai_only =true;
 
-    public  string IPAdress = "127.0.0.1"; //この辺はSettingMenuにて代わります
+    public  string IPAdress = "192.168.100.116"; //この辺はSettingMenuにて代わります
     public  string Port = "8001";
 
     public GameObject menu1_Blined_Panel; //ここの設定された値は、change_wall.cs内でシーン遷移時に設定側に反映されるように設定しています。逆もしかり？
@@ -38,6 +38,14 @@ public class ClientManager : MonoBehaviour
     public List<string> QUERY_Buffer = new List<string>(); //これは別スレッドのWebsocketClientからこれを操作し、さらにメインスレッドのここでGetcompomentでGachatControllerを操作するようのやつ
     public bool _isQueryArrive = false;
     public bool _isAnserArrive = false;
+
+    public string prefecture;
+    public string museum_name;
+    public string exhibition_name;
+    public string exhibition_reason;
+
+    public bool _isPrintFinish = false;
+
     void Start()
     {
 
@@ -65,7 +73,19 @@ public class ClientManager : MonoBehaviour
             //change_wallsにシーン遷移してもいいことを伝える
             _isAnserArrive = false;
         }
+
+        if (_isPrintFinish)
+        {
+            //リザルト画面になっている前提で処理しています、そうでないと_isPrintFinish = trueにはならないから！
+            Debug.Log("Print Finish!!");
+
+            GameObject Result_EventSystem = GameObject.Find("Result_EventSystem");
+            Result_EventSystem.GetComponent<change_result_panel>().StartCoroutine(Result_EventSystem.GetComponent<change_result_panel>().menu_move(speed:2));
+            _isPrintFinish = false;
+        }
     }
+
+    
     public void Start_func()
     {
         Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
@@ -152,6 +172,7 @@ public class ClientManager : MonoBehaviour
         ws.Send(json_bytes);
     }
 
+    
 
 
     public async Task<bool> Init_Test_CoMwithPython()
@@ -203,7 +224,7 @@ public class ClientManager : MonoBehaviour
 
         if(Recv_Type == "QUERY")
         {
-            //Debug.Log("クエリだよ");
+            Debug.Log("クエリだよ");
             //Debug.Log(dictionary["QUERY"].GetType());
             List<string> QUERY = (recv_dict["QUERY"] as JArray).ToObject<List<string>>();
 
@@ -225,11 +246,11 @@ public class ClientManager : MonoBehaviour
         }
         else if (Recv_Type == "ANSWER")
         {
-            _isAnserArrive = true;
-            string prefecture = (string) recv_dict["prefecture"];
-            string museum_name = (string)recv_dict["museum_name"];
-            string exhibition_name = (string)recv_dict["exhibition_name"];
-            string exhibition_reason = (string)recv_dict["exhibition_reason"];
+            _isAnserArrive = true; //Arriveしたことを告げる
+            prefecture = (string) recv_dict["prefecture"];
+            museum_name = (string)recv_dict["museum_name"];
+            exhibition_name = (string)recv_dict["exhibition_name"];
+            exhibition_reason = (string)recv_dict["exhibition_reason"];
             Debug.Log(prefecture + " " + museum_name + " " + exhibition_name);
             Debug.Log(exhibition_reason);
 
@@ -238,11 +259,18 @@ public class ClientManager : MonoBehaviour
             string Response_from_Python = (string)recv_dict["RESPONSE"]; //表示はここ（別スレッド）ではできませんので変更して、Update内で表示を行っている
             Debug.Log(Response_from_Python);
         }
+        else if (Recv_Type == "PRINT_FINISH")
+        {
+            Debug.Log("プリントが終了されました！websocketをクローズします");
+            _isPrintFinish = true;
+            ws.Close();
+        }
     }
     //サーバの接続が切れたときのメッセージを、ChatTextに表示する
     public void RecvClose()
     {
         Debug.Log("Closed");
+        ws.Close();
     }
 
     

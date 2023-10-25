@@ -94,10 +94,13 @@ public class Gacha_Controller : MonoBehaviour
         yield return new WaitForSeconds(5.1f); //職人芸、これで多分大丈夫！
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = false; //グラビティを個々で無効にする
         Debug.Log(Gacha_capsule.transform.position.y);
+
+        float speed = 1.5f; // 1秒あたり0.5ユニットの速度で動かす、IEnumeratorで動作速度を一定にするための策
         while (Gacha_capsule.transform.position.y < 7f)
         {
             //Debug.Log(Gacha_capsule.transform.position.y);
-            Gacha_capsule.transform.position = Gacha_capsule.transform.position += new Vector3(0, 0.025f, 0);
+            float moveAmount = speed * Time.deltaTime;
+            Gacha_capsule.transform.position = Gacha_capsule.transform.position += new Vector3(0, moveAmount, 0);
             yield return null;
 
         }
@@ -105,6 +108,9 @@ public class Gacha_Controller : MonoBehaviour
         Gacha_capsule.GetComponent<Animator>().speed = 0.7f; //再生開始、若干おそめにするのがよいような
         yield return new WaitForSeconds(2f);
         White_Blined_Circle.GetComponent<Animator>().speed = 1; //これで画面真っ白になる！
+
+        GameObject Change_walls_UI = GameObject.Find("Change_walls_UI");
+        Change_walls_UI.GetComponent<change_wall>().StartCoroutine(Change_walls_UI.GetComponent<change_wall>().change_3_to_result()); //画面遷移の開始
 
     }
     public IEnumerator Create_Query_Text_Bbble()
@@ -119,7 +125,7 @@ public class Gacha_Controller : MonoBehaviour
             Instantiate_Query.transform.parent = GameObject.Find("Query_Canvas").transform;
             float Scale = Random.Range(7f, 15f);
             Instantiate_Query.GetComponent<RectTransform>().localScale = new Vector3(Scale, Scale, Scale);
-            Instantiate_Query.GetComponent<TypefaceAnimator>().positionTo = new Vector3(0, Random.Range(1f, 3f), 0);
+            Instantiate_Query.GetComponent<TypefaceAnimator>().positionTo = new Vector3(0, Random.Range(0.7f, 2.5f), 0);
             yield return new WaitForSeconds(Random.Range(0.5f, 2f));
         }
         _isQueryShowEnd = true;
@@ -131,6 +137,19 @@ public class Gacha_Controller : MonoBehaviour
         float WaitTime = Random.Range(5f, 10f);
         yield return new WaitForSeconds(WaitTime); //疑似的に待ち時間を作る
         _isQueryArrive = true;
+        StartCoroutine(Fake_Answer_Arrive()); //疑似的な回答を作成開始
+    }
+
+    IEnumerator Fake_Answer_Arrive()
+    {
+        //standAloneMode時のみ使用する
+        float WaitTime = Random.Range(10f, 20f);
+        yield return new WaitForSeconds(WaitTime); //疑似的に待ち時間を作る
+        Init_Camera.GetComponent<ClientManager>().prefecture = "鳥取県";
+        Init_Camera.GetComponent<ClientManager>().museum_name = "なしっこ館";
+        Init_Camera.GetComponent<ClientManager>().exhibition_name = "常設展";
+        Init_Camera.GetComponent<ClientManager>().exhibition_reason = "鳥取よいこと一度はおいで！";
+        Init_Camera.GetComponent<ClientManager>()._isAnserArrive = true; //これで疑似的に回答が来たことにする
 
     }
     IEnumerator Camera_Motion()
@@ -196,7 +215,9 @@ public class Gacha_Controller : MonoBehaviour
         GameObject Gacha_Knob = GameObject.Find("Gacha_Knob");
         Gacha_Knob.GetComponent<GachaKnob>().Gacha_Rotate_On = true; //これで回せるようになる！
         while (true)
+
         {
+
             if (_isGacha_knob_Rotate_finish == true)
             {
                 break;

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using Newtonsoft.Json;
+using System.Text;
 
 public class change_wall : MonoBehaviour
 {
@@ -32,6 +34,8 @@ public class change_wall : MonoBehaviour
     {
         //Debug.Log(Screen.width);
         Blined_Panel.GetComponent<Image>().raycastTarget = false;
+        Now_Loading.GetComponent<Text>().enabled = false; //now loadingは初めは表示されないように
+        
     }
 
     // Update is called once per frame
@@ -59,9 +63,10 @@ public class change_wall : MonoBehaviour
         
     }
 
-    IEnumerator change_3_to_result()
+    public IEnumerator change_3_to_result()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
+        Now_Loading.GetComponent<Text>().enabled = true;
         while (true)
         {
             if (_isAnserArrive)
@@ -71,6 +76,25 @@ public class change_wall : MonoBehaviour
             yield return null; //chatgptからの回答が来るまでは待機！
             //このあたりにchangewall_UIのnow loadingの処理を入れる。。。。
         }
+
+        Now_Loading.GetComponent<Text>().enabled = false;
+        SceneManager.LoadScene("Result"); //これでリザルト画面へ遷移！
+        yield return new WaitForSeconds(0.1f); //時間置いたほうがいいかなと思って
+        TMP_Text museum_name = GameObject.Find("museum_name").GetComponent<TMP_Text>();
+        TMP_Text exhibition_type = GameObject.Find("exhibition_type").GetComponent<TMP_Text>();
+        TMP_Text prefecture = GameObject.Find("prefecture").GetComponent<TMP_Text>();
+        museum_name.text = init_camera.GetComponent<ClientManager>().museum_name;
+        exhibition_type.text = init_camera.GetComponent<ClientManager>().exhibition_name;
+        prefecture.text = init_camera.GetComponent<ClientManager>().prefecture;
+
+        yield return new WaitForSeconds(4f); //印刷開始まで、リザルト表示中にスタンバってる
+        //ここから"PRINT_START"を送って印刷を開始する
+        Dictionary<string, string>  user_input_dict = new Dictionary<string, string> { { "TYPE", "PRINT_START" } };
+        string json = JsonConvert.SerializeObject(user_input_dict);
+        byte[] json_bytes = Encoding.UTF8.GetBytes(json);
+        init_camera.GetComponent<ClientManager>().ws.Send(json_bytes); //これいいけるのか・・・・？よくわからん
+        Debug.Log("PRINT_START　Sent a Message");
+
 
     }
     IEnumerator menu_change2_to_3()
