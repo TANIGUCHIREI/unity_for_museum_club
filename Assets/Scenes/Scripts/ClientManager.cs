@@ -80,7 +80,7 @@ public class ClientManager : MonoBehaviour
             Debug.Log("Print Finish!!");
 
             GameObject Result_EventSystem = GameObject.Find("Result_EventSystem");
-            Result_EventSystem.GetComponent<change_result_panel>().StartCoroutine(Result_EventSystem.GetComponent<change_result_panel>().menu_move(speed:2));
+            Result_EventSystem.GetComponent<change_result_panel>().StartCoroutine(Result_EventSystem.GetComponent<change_result_panel>().menu_move(speed:1000));
             _isPrintFinish = false;
         }
     }

@@ -7,17 +7,21 @@ public class change_result_panel : MonoBehaviour
 {
     public GameObject ThanksMessage;
     public GameObject Results;
+    public GameObject Result_View;
+
 
     // Start is called before the first frame update
     private void Awake()
     {
-        ThanksMessage = GameObject.Find("ThanksMessage");
+        Result_View.SetActive(true); //シーン遷移でnullreferenceされないように対策
+        ThanksMessage.SetActive(true); 
         Results = GameObject.Find("Results");
         ThanksMessage.GetComponent<RectTransform>().anchoredPosition = new Vector3(Screen.width, 0, 0);
     }
     void Start()
     {
-        //StartCoroutine(menu_move(speed:2));実際はClientManagerのFixedUpdate関数内で処理されます
+        //StartCoroutine(menu_move(speed:1000));//実際はClientManagerのFixedUpdate関数内で処理されます
+        //Fake_Print_Finish_Arrive()はchange_wall.cs内のchange_3_to_result()で行っています
     }
 
     // Update is called once per frame
@@ -31,7 +35,7 @@ public class change_result_panel : MonoBehaviour
         while (Mathf.Abs(menus_position_x - init_x) < Screen.width)
         {
 
-            Results.GetComponent<RectTransform>().Translate(-speed, 0, 0);
+            Results.GetComponent<RectTransform>().Translate(-speed*Time.deltaTime, 0, 0);
             menus_position_x = Results.GetComponent<RectTransform>().anchoredPosition.x;
             yield return null; //これすることで画面に出力されるようになる
         }
@@ -39,4 +43,13 @@ public class change_result_panel : MonoBehaviour
         yield break;
     }
 
+    public void OnBackToHome()
+    {
+        GameObject Change_walls_UI = GameObject.Find("Change_walls_UI");
+        Change_walls_UI.GetComponent<change_wall>().StartCoroutine(Change_walls_UI.GetComponent<change_wall>().change_Result_to_menu());
+        //これでメニューへ戻る！・・・はず
+    }
+
+
+    
 }

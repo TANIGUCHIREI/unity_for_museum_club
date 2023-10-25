@@ -152,6 +152,8 @@ public class Gacha_Controller : MonoBehaviour
         Init_Camera.GetComponent<ClientManager>()._isAnserArrive = true; //これで疑似的に回答が来たことにする
 
     }
+
+    
     IEnumerator Camera_Motion()
     {
         camera0.GetComponent<Animator>().speed = 0;

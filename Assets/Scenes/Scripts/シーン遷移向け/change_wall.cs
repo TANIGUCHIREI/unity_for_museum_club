@@ -79,7 +79,8 @@ public class change_wall : MonoBehaviour
 
         Now_Loading.GetComponent<Text>().enabled = false;
         SceneManager.LoadScene("Result"); //これでリザルト画面へ遷移！
-        yield return new WaitForSeconds(0.1f); //時間置いたほうがいいかなと思って
+        yield return new WaitForSeconds(1f); //時間置いたほうがいいかなと思って
+        
         TMP_Text museum_name = GameObject.Find("museum_name").GetComponent<TMP_Text>();
         TMP_Text exhibition_type = GameObject.Find("exhibition_type").GetComponent<TMP_Text>();
         TMP_Text prefecture = GameObject.Find("prefecture").GetComponent<TMP_Text>();
@@ -87,14 +88,32 @@ public class change_wall : MonoBehaviour
         exhibition_type.text = init_camera.GetComponent<ClientManager>().exhibition_name;
         prefecture.text = init_camera.GetComponent<ClientManager>().prefecture;
 
-        yield return new WaitForSeconds(4f); //印刷開始まで、リザルト表示中にスタンバってる
+        yield return new WaitForSeconds(4f); //印刷開始まで、リザルト表示中にスタンバってる、表示中の途中辺りからPRINT_STARTをサーバに送信する
         //ここから"PRINT_START"を送って印刷を開始する
-        Dictionary<string, string>  user_input_dict = new Dictionary<string, string> { { "TYPE", "PRINT_START" } };
-        string json = JsonConvert.SerializeObject(user_input_dict);
-        byte[] json_bytes = Encoding.UTF8.GetBytes(json);
-        init_camera.GetComponent<ClientManager>().ws.Send(json_bytes); //これいいけるのか・・・・？よくわからん
-        Debug.Log("PRINT_START　Sent a Message");
+        if(init_camera.GetComponent<ClientManager>()._isStandAloneModeOne == false)
+        {
+            //通常モードだとほんとに印刷に入るために通信を行う
+            Dictionary<string, string> user_input_dict = new Dictionary<string, string> { { "TYPE", "PRINT_START" } };
+            string json = JsonConvert.SerializeObject(user_input_dict);
+            byte[] json_bytes = Encoding.UTF8.GetBytes(json);
+            init_camera.GetComponent<ClientManager>().ws.Send(json_bytes); //これいいけるのか・・・・？よくわからん
+            Debug.Log("PRINT_START　Sent a Message");
+        }
+        else
+        {
 
+            //StandAloneModeならランダム時間待機してからPRINT_FINISHを受信する
+            StartCoroutine(Fake_Print_Finish_Arrive());
+        }
+
+
+        IEnumerator Fake_Print_Finish_Arrive()
+        {
+            float WaitTime = Random.Range(5f, 10f);
+            yield return new WaitForSeconds(WaitTime); //疑似的に待ち時間を作る
+            init_camera.GetComponent<ClientManager>()._isPrintFinish = true;
+
+        }
 
     }
     IEnumerator menu_change2_to_3()
@@ -200,6 +219,29 @@ public class change_wall : MonoBehaviour
         //init_camera.GetComponent<ClientManager>().menu1_Blined_Panel = GameObject.Find("menu1_Blined_Panel"); //Sceneが切り替わるたびにdestroyed扱いになるのでその都度設定してあげる必要がある
         //init_camera.GetComponent<ClientManager>().menu1_Blined_Panel.GetComponent<Image>().raycastTarget = true; //はじめはメニューが動かないように
         //init_camera.GetComponent<ClientManager>().async_SendPython(Type: "Init_Connection"); //メニュー１に戻るたびに接続がきちんとできるか確認する
+    }
+
+    public IEnumerator change_Result_to_menu()
+    {
+        Blined_Panel.GetComponent<Image>().raycastTarget = true;
+
+        StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width + 100, move_time));
+        SceneManager.LoadScene("init_menu");
+
+        init_camera.GetComponent<Camera>().orthographic = true; //これすることで並行図法から透視図法になる
+        init_camera.GetComponent<User_Input>().Reset_Inputs(); //これでインプットをリセット!
+
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
+
+        Blined_Panel.GetComponent<Image>().raycastTarget = false;
+
+        init_camera.GetComponent<ClientManager>().Start_func(); //これ１つにまとめました!
     }
 
 
