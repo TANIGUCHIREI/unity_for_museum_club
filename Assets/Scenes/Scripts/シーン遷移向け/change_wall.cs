@@ -118,6 +118,19 @@ public class change_wall : MonoBehaviour
     }
     IEnumerator menu_change2_to_3()
     {
+        //‚Ü‚¸‚Í“ü—Í‚³‚ê‚½•¶š‚ÆŠÖ¼orŠÖ¼‚¶‚á‚È‚¢@‚Ìî•ñ‚ğClientManager‚Ö“`‚¦‚é
+        GameObject Menu = GameObject.Find("EventSystem");
+        init_camera.GetComponent<ClientManager>()._is_kansai_only = Menu.GetComponent<menu>()._isKansaiOnly;
+
+        if (Menu.GetComponent<menu>()._isOmakase)
+        {
+            init_camera.GetComponent<ClientManager>().userinput_text = "‚¨‚Ü‚©‚¹";
+        }
+        else
+        {
+            init_camera.GetComponent<ClientManager>().userinput_text = Menu.GetComponent<menu>().User_Input_Field.GetComponent<TMP_InputField>().text;
+        }
+        
         Blined_Panel.GetComponent<Image>().raycastTarget = true;
 
         StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield return‚µ‚È‚¢‚Æyiled‚µ‚È‚¢‚Ì‚Å‚·‚®‚É‰º‚Ìˆ—‚ªn‚Ü‚é

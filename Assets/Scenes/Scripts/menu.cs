@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Text;
 using UnityEngine.SceneManagement;
+using TMPro;
+
 public class menu : MonoBehaviour
 {
     public GameObject menus;
@@ -18,10 +21,11 @@ public class menu : MonoBehaviour
     public GameObject zenkoku;
 
     public GameObject japan_3Dmap;
-    public GameObject PopUpwindow;
+    //public GameObject PopUpwindow;
     public GameObject change_walls;
 
     public GameObject init_camera;
+    public GameObject User_Input_Field;
 
     public float back_treshhold_time = 0;
     public bool menu_moving = false; //連打して動いちゃわない用のやつ
@@ -31,7 +35,12 @@ public class menu : MonoBehaviour
     //public Camera cam;
     public float speed = 0;
 
-    
+    public GameObject Canvas_for_Confirmation;
+    public GameObject Input_Confirmation;
+    public bool _isOmakase;
+    public bool _isKansaiOnly = true;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,6 +51,8 @@ public class menu : MonoBehaviour
         menu2_1.SetActive(false);
         menu2_2.SetActive(false);
         japan_3Dmap.SetActive(true);
+        Canvas_for_Confirmation.SetActive(true);
+        Canvas_for_Confirmation.GetComponent<Animator>().SetFloat("speed", 0); //multipleする値を0にすることで実質速度を0、つまりストップさせる
         //menu3.SetActive(true);
 
         //cameraobj = GameObject.Find("Main Camera");
@@ -74,8 +85,46 @@ public class menu : MonoBehaviour
         }
     }
 
+    public void OnSearchButtonOn()
+    {
+        string Input_Confirmation_text = "";
+        if (_isKansaiOnly)
+        {
+            Input_Confirmation_text += "関西の展示で\n";
+        }
+        else
+        {
+            Input_Confirmation_text += "全国の展示で\n";
+        }
+
+        if (_isOmakase)
+        {
+            Input_Confirmation_text += "「おまかせ」\n";
+        }
+        else
+        {
+            Input_Confirmation_text += "「" + User_Input_Field.GetComponent<TMP_InputField>().text + "」\n";
+        }
+
+        Input_Confirmation_text += "という内容でガチャを回します。\nよろしいですか？";
+        Input_Confirmation.GetComponent<TMP_Text>().text = Input_Confirmation_text;
+
+        Canvas_for_Confirmation.GetComponent<Animator>().SetFloat("speed", 1); //これでポップアップのアニメーションが動作します
+        Canvas_for_Confirmation.GetComponent<Animator>().Play("Menu_Confirmation", 0, 0f); //はじめから動作させる
+    }
+
+    public void OnConfirmationBackOn()
+    {
+        
+
+        Canvas_for_Confirmation.GetComponent<Animator>().SetFloat("speed", -1); //これで再生を逆向きにする・・・？
+        Canvas_for_Confirmation.GetComponent<Animator>().Play("Menu_Confirmation", 0,1f); //1fは最後ということ・最後から逆向き（－１）に再生する
+        //Canvas_for_Confirmation.SetActive(false); 
+    }
+
     public void Change_to_2_1()
     {
+        _isOmakase = false;
         menu2_1.SetActive(true);
         menu2_2.SetActive(false);
         StartCoroutine(menu_move(-speed));
@@ -83,6 +132,7 @@ public class menu : MonoBehaviour
 
     public void Change_to_2_2()
     {
+        _isOmakase = true;
         menu2_2.SetActive(true);
         menu2_1.SetActive(false);
         StartCoroutine(menu_move(-speed));
@@ -127,37 +177,34 @@ public class menu : MonoBehaviour
 
     public void OnKansaiOnlyOn()
     {
+        _isKansaiOnly = true;
+        kansai_obj.GetComponent<Animator>().SetBool("pop", true);
+        other_japan_obj.GetComponent<Animator>().SetBool("pop", false);
+
+
+        kansainomi.GetComponent<Animator>().SetBool("transparent", false);
+        zenkoku.GetComponent<Animator>().SetBool("transparent", true);
+        init_camera.GetComponent<User_Input>()._is_kansai_only = true; 
+
+    }
+
+    public void OnAllJapnOn()
+    {
+        _isKansaiOnly = false;
+        
         kansai_obj.GetComponent<Animator>().SetBool("pop", false);
         other_japan_obj.GetComponent<Animator>().SetBool("pop", true);
 
         kansainomi.GetComponent<Animator>().SetBool("transparent", true);
         zenkoku.GetComponent<Animator>().SetBool("transparent", false);
 
-        init_camera.GetComponent<User_Input>()._is_kansai_only = false; //なんか逆に動くぞ・・・？まあいいか
-
-    }
-
-    public void OnAllJapnOn()
-    {
-        kansai_obj.GetComponent<Animator>().SetBool("pop", true);
-        other_japan_obj.GetComponent<Animator>().SetBool("pop",false);
-
-        
-        kansainomi.GetComponent<Animator>().SetBool("transparent", false);
-        zenkoku.GetComponent<Animator>().SetBool("transparent", true);
-
-        init_camera.GetComponent<User_Input>()._is_kansai_only = true;
+        init_camera.GetComponent<User_Input>()._is_kansai_only = false;
 
 
 
     }
 
-    public void OnGoTomenu3Enter()
-    {
-        PopUpwindow.GetComponent<Animator>().SetBool("Popup", true);
-    }
-
-   
+  
 
     IEnumerator menu_move(float speed)
     {
