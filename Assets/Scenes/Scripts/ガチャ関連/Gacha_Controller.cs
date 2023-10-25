@@ -13,6 +13,7 @@ public class Gacha_Controller : MonoBehaviour
     public GameObject Gacha_Insert_Paper;
     public AudioClip shutter_sound;
     public AudioClip SpotLight_sound;
+    public AudioClip Gacha_Emit_sound;
     public GameObject Lamps;
     public GameObject Finish_Lamp;
     AudioSource audioSource;
@@ -21,7 +22,8 @@ public class Gacha_Controller : MonoBehaviour
     //public List<string> QUERY = new List<string>() { "これは", "テスト用の", "クエリーです！！！", "まぁどんなものが", "くるのか", "わかりませんけど", "こまっちまう", "ネタ切れ", "のび太", "hogehoge", "querys" };
     public List<string> QUERY = new List<string>() { "感嘆のためこれだけ！！！" };
     public GameObject Query_Text_Instance;
-
+    public GameObject Gacha_capsule;
+    public GameObject White_Blined_Circle; //リザルト画面への遷移用、ホワイト
     public bool _isQueryArrive = false;
     public bool _isPaperInsertFinish = false;
     public bool _isQueryShowEnd = false;
@@ -44,9 +46,16 @@ public class Gacha_Controller : MonoBehaviour
         Rotate_Arrow = GameObject.Find("Rotate_Arrow");
         Rotate_Arrow.GetComponent<Animator>().speed = 0;
 
+        Gacha_capsule = GameObject.Find("Gacha_capsule");
+        Gacha_capsule.GetComponent<Animator>().speed = 0;
+        Gacha_capsule.GetComponent<Rigidbody>().useGravity = false;
 
-        camera0.GetComponent<Animator>().enabled = false;
-        //StartCoroutine(Camera_Motion());
+        White_Blined_Circle = GameObject.Find("White_Blined_Circle");
+        White_Blined_Circle.GetComponent<Animator>().speed = 0;
+
+        //camera0.GetComponent<Animator>().enabled = false; //テスト用、実際は動きます
+        //StartCoroutine(Gacha_Capsule_Move()); //テスト用↑とこれをコメントアウト外してください
+        StartCoroutine(Camera_Motion()); //これがメインで動きます
 
 
         try
@@ -75,6 +84,29 @@ public class Gacha_Controller : MonoBehaviour
         
     }
 
+    public IEnumerator Gacha_Capsule_Move()
+    {
+
+        audioSource.PlayOneShot(Gacha_Emit_sound);
+        Gacha_capsule.GetComponent<Rigidbody>().useGravity = false;
+        yield return new WaitForSeconds(3f);
+        Gacha_capsule.GetComponent<Rigidbody>().useGravity = true;
+        yield return new WaitForSeconds(5.1f); //職人芸、これで多分大丈夫！
+        Gacha_capsule.GetComponent<Rigidbody>().useGravity = false; //グラビティを個々で無効にする
+        Debug.Log(Gacha_capsule.transform.position.y);
+        while (Gacha_capsule.transform.position.y < 7f)
+        {
+            //Debug.Log(Gacha_capsule.transform.position.y);
+            Gacha_capsule.transform.position = Gacha_capsule.transform.position += new Vector3(0, 0.025f, 0);
+            yield return null;
+
+        }
+
+        Gacha_capsule.GetComponent<Animator>().speed = 0.7f; //再生開始、若干おそめにするのがよいような
+        yield return new WaitForSeconds(2f);
+        White_Blined_Circle.GetComponent<Animator>().speed = 1; //これで画面真っ白になる！
+
+    }
     public IEnumerator Create_Query_Text_Bbble()
     {
   
@@ -87,8 +119,8 @@ public class Gacha_Controller : MonoBehaviour
             Instantiate_Query.transform.parent = GameObject.Find("Query_Canvas").transform;
             float Scale = Random.Range(7f, 15f);
             Instantiate_Query.GetComponent<RectTransform>().localScale = new Vector3(Scale, Scale, Scale);
-            Instantiate_Query.GetComponent<TypefaceAnimator>().positionTo = new Vector3(0, Random.Range(2f, 5f), 0);
-            yield return new WaitForSeconds(Random.Range(3f, 5f));
+            Instantiate_Query.GetComponent<TypefaceAnimator>().positionTo = new Vector3(0, Random.Range(1f, 3f), 0);
+            yield return new WaitForSeconds(Random.Range(0.5f, 2f));
         }
         _isQueryShowEnd = true;
     }
@@ -122,6 +154,7 @@ public class Gacha_Controller : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         camera0.SetActive(false);
         camera0.SetActive(true);
+        audioSource.PlayOneShot(shutter_sound);
         camera0.GetComponent<Animator>().speed = 1;
         yield return new WaitForSeconds(10f); //上を見るまでの待ち時間
         camera0.GetComponent<Animator>().speed = 0;
@@ -160,6 +193,8 @@ public class Gacha_Controller : MonoBehaviour
 
         Rotate_Arrow.GetComponent<Animator>().speed = 1; //回転再生
 
+        GameObject Gacha_Knob = GameObject.Find("Gacha_Knob");
+        Gacha_Knob.GetComponent<GachaKnob>().Gacha_Rotate_On = true; //これで回せるようになる！
         while (true)
         {
             if (_isGacha_knob_Rotate_finish == true)
@@ -169,6 +204,9 @@ public class Gacha_Controller : MonoBehaviour
             yield return null; //ユーザーがガチャノブを回すまで待つ
         }
 
+        camera0.GetComponent<Animator>().speed = 1; //カメラ再生再開
+        StartCoroutine(Gacha_Capsule_Move()); //ガチャをここで落とす
+        //リザルト画面へのカメラを真っ白にする演出はGacha_Capsule_Move()内でやってます
     }
 
     IEnumerator WaitAndShow_Query()

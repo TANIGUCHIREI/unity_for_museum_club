@@ -10,25 +10,29 @@ public class GachaKnob : MonoBehaviour
     private float _totalRotation = 0.0f;
     private const float ROTATE_THRESHOLD = 360.0f;
     public bool _isRotateFinish = false;
-
+    public bool Gacha_Rotate_On = false;
     public float N = 12;
     private float divided_angle;
     private float next_sound_angle  ;
     AudioSource audioSource;
     public AudioClip Gacha_sound;
     public AudioClip Gacha_Emit_sound;
+
+    public GameObject Gacha_Event;
     void Start()
     {
         _camera = GameObject.Find("init_camera_duplicate").GetComponent<Camera>();
         divided_angle =  360 / N;
         next_sound_angle = divided_angle;
         audioSource = GetComponent<AudioSource>();
+
+        Gacha_Event = GameObject.Find("Gacha_Event");
     }
 
     void Update()
     {
-        if(_isRotateFinish == false)
-        {
+        if(_isRotateFinish == false && Gacha_Rotate_On)
+        {//まだ回り切っていない時、かつガチャが動いてもいいよってときに動く
             _knobScreenPos = _camera.WorldToScreenPoint(transform.position);  // ここで毎フレーム更新
 
             // タッチ入力の取得
@@ -76,7 +80,8 @@ public class GachaKnob : MonoBehaviour
             if (_totalRotation >= ROTATE_THRESHOLD)
             {
                 _isRotateFinish = true;
-                audioSource.PlayOneShot(Gacha_Emit_sound);
+                Gacha_Event.GetComponent<Gacha_Controller>()._isGacha_knob_Rotate_finish = true;
+                //audioSource.PlayOneShot(Gacha_Emit_sound);
             }
             _initVector = _moveVector;  // 現在のベクトルを初期ベクトルとして更新
         }

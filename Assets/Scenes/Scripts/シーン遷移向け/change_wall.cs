@@ -12,11 +12,12 @@ public class change_wall : MonoBehaviour
     public GameObject white_wall;
     public GameObject Blined_Panel; //これで操作中のタップを防止する。これのRayCast Targetを調整
     public GameObject init_camera;
-
+    public GameObject Now_Loading;
    
     public float move_time = 2f;
     public float screen_width = 0f;
 
+    public bool _isAnserArrive = false;
     // Start is called before the first frame update
 
     void Awake()
@@ -56,6 +57,21 @@ public class change_wall : MonoBehaviour
     {
         StartCoroutine(change_setting2_to_menu());
         
+    }
+
+    IEnumerator change_3_to_result()
+    {
+        yield return new WaitForSeconds(1f);
+        while (true)
+        {
+            if (_isAnserArrive)
+            {
+                break;
+            }
+            yield return null; //chatgptからの回答が来るまでは待機！
+            //このあたりにchangewall_UIのnow loadingの処理を入れる。。。。
+        }
+
     }
     IEnumerator menu_change2_to_3()
     {

@@ -18,9 +18,9 @@ public class Query_Text : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        gameObject.transform.Translate(new Vector3(0, 0.03f, 0));
+        gameObject.transform.Translate(new Vector3(0, 0.05f, 0));
         //Debug.Log(gameObject.GetComponent<RectTransform>().localPosition.y); ‚±‚ê‚Å‚¨‚‹
-        if (gameObject.GetComponent<RectTransform>().localPosition.y > 7000)
+        if (gameObject.GetComponent<RectTransform>().localPosition.y > 8000)
         {
             Destroy(gameObject);
         }

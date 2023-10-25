@@ -37,6 +37,7 @@ public class ClientManager : MonoBehaviour
 
     public List<string> QUERY_Buffer = new List<string>(); //これは別スレッドのWebsocketClientからこれを操作し、さらにメインスレッドのここでGetcompomentでGachatControllerを操作するようのやつ
     public bool _isQueryArrive = false;
+    public bool _isAnserArrive = false;
     void Start()
     {
 
@@ -55,6 +56,14 @@ public class ClientManager : MonoBehaviour
             Gacha_Event.GetComponent<Gacha_Controller>()._isQueryArrive = true;
             _isQueryArrive = false;
             //↑についてhttps://mono-pro.net/archives/9029が参考になりました
+        }
+
+        if (_isAnserArrive)
+        {
+            GameObject change_wall = GameObject.Find("Change_walls_UI");
+            change_wall.GetComponent<change_wall>()._isAnserArrive = true;
+            //change_wallsにシーン遷移してもいいことを伝える
+            _isAnserArrive = false;
         }
     }
     public void Start_func()
@@ -216,6 +225,7 @@ public class ClientManager : MonoBehaviour
         }
         else if (Recv_Type == "ANSWER")
         {
+            _isAnserArrive = true;
             string prefecture = (string) recv_dict["prefecture"];
             string museum_name = (string)recv_dict["museum_name"];
             string exhibition_name = (string)recv_dict["exhibition_name"];
