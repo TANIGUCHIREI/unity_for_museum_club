@@ -68,7 +68,23 @@ public class VoiceRecorder : MonoBehaviour
         byte[] wavData = GetWavData(); //送信用のバイナリデータの作成
 
         GameObject Init_Camera = GameObject.Find("Init_Camera");
-        Init_Camera.GetComponent<ClientManager>().ws.Send(wavData);
+        if (!Init_Camera.GetComponent<ClientManager>()._isStandAloneModeOne)
+        {
+            Init_Camera.GetComponent<ClientManager>().ws.Send(wavData);
+        }
+        else
+        {
+            //スタンドアロンモードなら、送信するかわりにブラフを立てる
+            StartCoroutine(Fake_Voice_Converted_Text_Arrive());
+        }
+    }
+
+    IEnumerator Fake_Voice_Converted_Text_Arrive()
+    {
+        yield return new WaitForSeconds(Random.Range(1f, 4f));
+        GameObject Init_Camera = GameObject.Find("Init_Camera");
+        Init_Camera.GetComponent<ClientManager>().userinput_text = "みそスープ";
+        Init_Camera.GetComponent<ClientManager>()._isAudio_Input_Converted_Arrive = true;
     }
 
     public void SaveAsWav()
