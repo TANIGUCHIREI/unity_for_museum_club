@@ -46,6 +46,8 @@ public class ClientManager : MonoBehaviour
 
     public bool _isPrintFinish = false;
 
+    public bool _isAudio_Input_Converted_Arrive = false;
+
     void Start()
     {
 
@@ -82,6 +84,19 @@ public class ClientManager : MonoBehaviour
             GameObject Result_EventSystem = GameObject.Find("Result_EventSystem");
             Result_EventSystem.GetComponent<change_result_panel>().StartCoroutine(Result_EventSystem.GetComponent<change_result_panel>().menu_move(speed:1000));
             _isPrintFinish = false;
+        }
+
+        if (_isAudio_Input_Converted_Arrive)
+        {
+            Debug.Log("音声入力が変換されました！ : " + userinput_text);
+            GameObject menu_EventSystem = GameObject.Find("EventSystem");
+            GameObject InputField = GameObject.Find("InputField (TMP)");
+            GameObject Record_Button = GameObject.Find("Record_Button"); //「変換中です・・・」のアニメーションを停止させるために必要
+            Record_Button.GetComponent<VoiceRecorder>()._is_convert_to_text_finish = true;
+            InputField.GetComponent<TMP_InputField>().text = userinput_text;
+            menu_EventSystem.GetComponent<menu>().OnRecordingBackOn(); //ポップアップを戻す
+            
+            _isAudio_Input_Converted_Arrive = false;
         }
     }
 
@@ -264,6 +279,10 @@ public class ClientManager : MonoBehaviour
             Debug.Log("プリントが終了されました！websocketをクローズします");
             _isPrintFinish = true;
             ws.Close();
+        }else if (Recv_Type == "AUDIO")
+        {
+            userinput_text = (string)recv_dict["user_input"]; //音声から変換された入力テキストを受信している
+            _isAudio_Input_Converted_Arrive = true;
         }
     }
     //サーバの接続が切れたときのメッセージを、ChatTextに表示する
@@ -273,5 +292,14 @@ public class ClientManager : MonoBehaviour
         ws.Close();
     }
 
-    
+    private void OnApplicationQuit()
+    {
+        Debug.Log("OnApplicationQuit");
+        if (!_isStandAloneModeOne)
+        {
+            ws.Close(); //Close処理をアプリが終了するときにやる
+        }
+    }
+
+
 }

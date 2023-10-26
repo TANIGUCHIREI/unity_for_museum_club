@@ -64,6 +64,11 @@ public class VoiceRecorder : MonoBehaviour
         }
 
         doing_convert_to_text_now = true; //レコードを止めた後は送信状態になるはずで、このときはボタンを動かさないようにする
+
+        byte[] wavData = GetWavData(); //送信用のバイナリデータの作成
+
+        GameObject Init_Camera = GameObject.Find("Init_Camera");
+        Init_Camera.GetComponent<ClientManager>().ws.Send(wavData);
     }
 
     public void SaveAsWav()
@@ -148,7 +153,18 @@ public class VoiceRecorder : MonoBehaviour
 
             yield return null;
         }
+
+
+        yield return new WaitForSeconds(0.5f); //直後だと違和感あるので少し遅れて戻す
+        gameObject.GetComponent<Shape>().settings.blur = 0;
+        gameObject.GetComponentInChildren<TMP_Text>().text = "ここを押しながら\n喋ってください";
+        GameObject Back_Button = GameObject.Find("Recording_Back_Button");
+        Back_Button.GetComponent<Button>().interactable = true; //なんかこれをやらないともう一回ポップアップさせると戻るがinteractable = falseになってしまっておかしい
+        doing_convert_to_text_now = false;
+        _is_convert_to_text_finish = false; //次回以降に向けてリセットする
     }
+
+    
 
 }
 

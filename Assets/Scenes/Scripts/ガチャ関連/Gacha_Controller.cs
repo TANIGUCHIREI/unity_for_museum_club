@@ -89,6 +89,11 @@ public class Gacha_Controller : MonoBehaviour
 
     public IEnumerator Gacha_Capsule_Move()
     {
+        float r = Random.Range(0, 2); //なぜかわからんけどこんな変な値でいい感じの色になった・・・256だと真っ白、1fだと真っ黒なのに・・・意味わからんけど動くからいいや
+        float g = Random.Range(0, 2);
+        float b = Random.Range(0, 2);
+        
+        GameObject.Find("Sphere").GetComponent<Renderer>().sharedMaterial.color = new Color(r, g, b,1); //出るガチャの色が毎回変わります
 
         audioSource.PlayOneShot(Gacha_Emit_sound);
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = false;
