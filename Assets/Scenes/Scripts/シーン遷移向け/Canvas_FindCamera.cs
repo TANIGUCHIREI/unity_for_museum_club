@@ -26,7 +26,7 @@ public class Canvas_FindCamera : MonoBehaviour
             //ボタンなどのリスナーの追加設定をここでしている
             GameObject Gear = GameObject.Find("Gear");
             GameObject Change_walls_UI = GameObject.Find("Change_walls_UI");
-            Gear.GetComponent<Button>().onClick.AddListener(Change_walls_UI.GetComponent<change_wall>().change_2_setting); 
+            Gear.GetComponent<Button>().onClick.AddListener(Change_walls_UI.GetComponent<change_wall>().change_2_setting); //menu1がInspector上で有効でないとNullReferenceErroが出ます！
             //ここでつけるので、はじめからButtonをつけてしまっているとインスペクタ上に表示されていなくても実際はついている！
 
         }

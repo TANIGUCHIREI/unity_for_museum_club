@@ -53,6 +53,9 @@ public class Gacha_Controller : MonoBehaviour
         White_Blined_Circle = GameObject.Find("White_Blined_Circle");
         White_Blined_Circle.GetComponent<Animator>().speed = 0;
 
+
+
+        //SpotLight.GetComponent<Light>().intensity = 2f; //テスト用　ライトつけて見やすくします
         //camera0.GetComponent<Animator>().enabled = false; //テスト用、実際は動きます
         //StartCoroutine(Gacha_Capsule_Move()); //テスト用↑とこれをコメントアウト外してください
         StartCoroutine(Camera_Motion()); //これがメインで動きます
@@ -91,9 +94,12 @@ public class Gacha_Controller : MonoBehaviour
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = false;
         yield return new WaitForSeconds(3f);
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = true;
+        Gacha_capsule.GetComponent<Rigidbody>().AddForce(new Vector3(0, -20f, -30f)); //若干初速を与える
+        //Gacha_capsule.GetComponent<Rigidbody>().AddTorque(new Vector3(0, 0.1f, 0));
         yield return new WaitForSeconds(5.1f); //職人芸、これで多分大丈夫！
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = false; //グラビティを個々で無効にする
-        Debug.Log(Gacha_capsule.transform.position.y);
+        
+       Debug.Log(Gacha_capsule.transform.position.y);
 
         float speed = 1.5f; // 1秒あたり0.5ユニットの速度で動かす、IEnumeratorで動作速度を一定にするための策
         while (Gacha_capsule.transform.position.y < 7f)

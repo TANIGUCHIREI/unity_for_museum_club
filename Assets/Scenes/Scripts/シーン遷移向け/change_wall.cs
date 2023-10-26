@@ -122,6 +122,8 @@ public class change_wall : MonoBehaviour
         GameObject Menu = GameObject.Find("EventSystem");
         init_camera.GetComponent<ClientManager>()._is_kansai_only = Menu.GetComponent<menu>()._isKansaiOnly;
 
+
+        //ClientManager側に入力情報を送信
         if (Menu.GetComponent<menu>()._isOmakase)
         {
             init_camera.GetComponent<ClientManager>().userinput_text = "おまかせ";
@@ -130,7 +132,10 @@ public class change_wall : MonoBehaviour
         {
             init_camera.GetComponent<ClientManager>().userinput_text = Menu.GetComponent<menu>().User_Input_Field.GetComponent<TMP_InputField>().text;
         }
-        
+
+
+        init_camera.GetComponent<ClientManager>().async_SendPython(); //ここでサーバーに情報を送信
+
         Blined_Panel.GetComponent<Image>().raycastTarget = true;
 
         StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
