@@ -13,12 +13,37 @@ public class VoiceRecorder : MonoBehaviour
     private string currentDevice;
     private bool isRecording = false;
     private int lastSample;
-
+    GameObject Back_Button;
+    GameObject Warning_About_Record;
     public bool doing_convert_to_text_now = false;
     public bool _is_convert_to_text_finish = false;
 
+    //[HideInInspector] //これでインスペクタ上からは見えなくなるが他のスクリプトから参照できる
+    private float Threshold_Time = 0.5f;
+    private float Recording_Time =0f;
+
+
+
+    private void Awake()
+    {
+        Back_Button = GameObject.Find("Recording_Back_Button");
+        Warning_About_Record = GameObject.Find("Warning_About_Record");
+        Warning_About_Record.GetComponent<TMP_Text>().text = ""; 
+    }
+
     void Update()
     {
+
+
+        if (isRecording)
+        {
+            Recording_Time += Time.deltaTime; //録音時間をカウントする
+        }
+
+        
+
+        ///下記はテスト用の動作
+        /*
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (isRecording)
@@ -37,17 +62,25 @@ public class VoiceRecorder : MonoBehaviour
             byte[] wavData = GetWavData();
             // Do something with wavData if needed
         }
+
+        */
     }
+
+
 
     public void StartRecording()
     {
 
         isRecording = true;
-        recordedClip = Microphone.Start(currentDevice, true, 300, 44100);
+        Warning_About_Record.GetComponent<TMP_Text>().text = "";
+        Recording_Time = 0f;
+        recordedClip = Microphone.Start(currentDevice, true, 100, 44100);
     }
 
     public void StopRecording()
     {
+        
+
         if (!isRecording) return;
 
         int position = Microphone.GetPosition(currentDevice);
@@ -70,7 +103,8 @@ public class VoiceRecorder : MonoBehaviour
         GameObject Init_Camera = GameObject.Find("Init_Camera");
         if (!Init_Camera.GetComponent<ClientManager>()._isStandAloneModeOne)
         {
-            Init_Camera.GetComponent<ClientManager>().ws.Send(wavData);
+            //Init_Camera.GetComponent<ClientManager>().ws.Send(wavData);
+            Init_Camera.GetComponent<ClientManager>().StartCoroutine(Init_Camera.GetComponent<ClientManager>().SendWavFile(wavData, Init_Camera.GetComponent<ClientManager>().ws, chunkSize: 10240));
         }
         else
         {
@@ -87,6 +121,12 @@ public class VoiceRecorder : MonoBehaviour
         Init_Camera.GetComponent<ClientManager>()._isAudio_Input_Converted_Arrive = true;
     }
 
+    IEnumerator Warning_Input_is_too_short()
+    {
+        Warning_About_Record.GetComponent<TMP_Text>().text = "入力が短すぎます！";
+        yield return new WaitForSeconds(2f); //警告を表示
+        Warning_About_Record.GetComponent<TMP_Text>().text = "";
+    }
     public void SaveAsWav()
     {
         if (!recordedClip) return;
@@ -115,7 +155,7 @@ public class VoiceRecorder : MonoBehaviour
         if (!doing_convert_to_text_now)
         {
             //Debug.Log("OnRecordButtonDown()"); ☆Unityではシーン上に同じ名前のものがあったら、特にエラーはでずに（多分上から？）ほかのオブジェクトから勝手に処理される・・・！BackButtonが複数あったせいで何回やってもfalseにならんかった・・・
-            GameObject Back_Button = GameObject.Find("Recording_Back_Button");
+            
             //Back_Button.GetComponent<Animator>().speed = 0f;
             Back_Button.GetComponent<Button>().interactable = false; //変換中は戻れないように（エラー処理的にあんまよくない気もするが・・・）
               StartRecording();
@@ -126,12 +166,30 @@ public class VoiceRecorder : MonoBehaviour
 
     public void OnRecordButtonUp()
     {
-        if (!doing_convert_to_text_now)
+
+        if (Recording_Time < Threshold_Time)
         {
-            StopRecording();
-            StartCoroutine(Converting_voice_to_text_Animation());
-            gameObject.GetComponentInChildren<TMP_Text>().text = "文字に変換しています・・・"; //おいおいこれめっちゃ楽じゃないか
+            Debug.Log("入力時間が短すぎます！");
+            StartCoroutine(Warning_Input_is_too_short());
+            Recording_Time = 0f;
+            isRecording = false;
+            Back_Button.GetComponent<Button>().interactable = true; //これで戻れるようになる
+            StopRecording(); // isRecording = false;だと何もリターンせず。。。これ必要か？
         }
+        else
+        {
+            Debug.Log("Threshold Time:" + Threshold_Time);
+            Debug.Log(Recording_Time);
+            if (!doing_convert_to_text_now)
+            {
+                StopRecording();
+                StartCoroutine(Converting_voice_to_text_Animation());
+                gameObject.GetComponentInChildren<TMP_Text>().text = "文字に変換しています・・・"; //おいおいこれめっちゃ楽じゃないか
+            }
+        }
+
+
+       
         
         
     }

@@ -15,7 +15,9 @@ public class change_wall : MonoBehaviour
     public GameObject Blined_Panel; //これで操作中のタップを防止する。これのRayCast Targetを調整
     public GameObject init_camera;
     public GameObject Now_Loading;
-   
+    public GameObject Canvas_for_Warning; //もし接続が切れたらこれを表示する
+
+
     public float move_time = 2f;
     public float screen_width = 0f;
 
@@ -114,6 +116,27 @@ public class change_wall : MonoBehaviour
             init_camera.GetComponent<ClientManager>()._isPrintFinish = true;
 
         }
+
+
+    }
+
+    public IEnumerator Connection_Error_and_change_to_menu()
+    {
+        Canvas_for_Warning.GetComponent<Animator>().SetFloat("speed", 1); 
+        Canvas_for_Warning.GetComponent<Animator>().Play("Warning", 0, 0f);
+        yield return new WaitForSeconds(2.5f); //ちょっと待ってから遷移
+
+        SceneManager.LoadScene("init_menu");
+
+        yield return new WaitForSeconds(2.5f);
+        init_camera.GetComponent<Camera>().orthographic = true; //これすることで並行図法から透視図法になる
+        init_camera.GetComponent<User_Input>().Reset_Inputs(); //これでインプットをリセット!
+
+        Canvas_for_Warning.GetComponent<Animator>().SetFloat("speed", -1);
+        Canvas_for_Warning.GetComponent<Animator>().Play("Warning", 0, 1f);
+
+        init_camera.GetComponent<ClientManager>().Start_func(); //これ１つにまとめました!
+
 
     }
     IEnumerator menu_change2_to_3()

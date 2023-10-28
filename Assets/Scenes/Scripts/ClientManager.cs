@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks; //非同期にwebsocketでつうしんを行うためのもの
 using TMPro;
+using System;
 
 public class ClientManager : MonoBehaviour
 {
@@ -32,7 +33,7 @@ public class ClientManager : MonoBehaviour
 
     public GameObject menu1_Blined_Panel; //ここの設定された値は、change_wall.cs内でシーン遷移時に設定側に反映されるように設定しています。逆もしかり？
     public TMP_Text Status_Text;
-
+    public GameObject Change_walls_UI;
     public bool _isStandAloneModeOne = false; //これがOnであるときは通信がいらない、というかテストモードになる
 
     public List<string> QUERY_Buffer = new List<string>(); //これは別スレッドのWebsocketClientからこれを操作し、さらにメインスレッドのここでGetcompomentでGachatControllerを操作するようのやつ
@@ -47,6 +48,9 @@ public class ClientManager : MonoBehaviour
     public bool _isPrintFinish = false;
 
     public bool _isAudio_Input_Converted_Arrive = false;
+
+    private bool _is_Coneection_Closed = false;
+    private bool Doing_InitConnection_test = false;
 
     void Start()
     {
@@ -98,6 +102,14 @@ public class ClientManager : MonoBehaviour
             
             _isAudio_Input_Converted_Arrive = false;
         }
+
+        if(_is_Coneection_Closed && !_isPrintFinish && !Doing_InitConnection_test)
+        {
+            //コネクションが切れたが印刷が終わっていない（つまりラスト画面に達していないのに接続が切れた場合）は以上なのでタイトル画面に戻る
+            //またタイトル画面でのコネクションエラーは仕様なので無視する
+            StartCoroutine(Change_walls_UI.GetComponent<change_wall>().Connection_Error_and_change_to_menu());
+            _is_Coneection_Closed = false;
+        }
     }
 
     
@@ -138,12 +150,17 @@ public class ClientManager : MonoBehaviour
             {
                 //メニュー１にて（つまり初回起動時とか）ws connectできるかどうかの確認
 
+                Doing_InitConnection_test = true; //初回の接続テストをしていることを全体掲示
                 bool _is_ConnectSuccess = await Init_Test_CoMwithPython(); //初回画面にて接続に成功したら次の画面に行ける、ムリポなら設定しかいけない
 
                 if (_is_ConnectSuccess)
                 {
                     menu1_Blined_Panel.GetComponent<Image>().raycastTarget = false; //接続に成功したら次の画面に行けるようにする！
                 }
+
+                await Task.Delay(100); // 0.1秒待つ
+
+                Doing_InitConnection_test = false;
             }
             else
             {
@@ -219,7 +236,6 @@ public class ClientManager : MonoBehaviour
         {
             Debug.Log("接続先がオープンされていません！");
             Status_Text.text = "Cannot Connect To the Server ! \nPlease Check the Setting";
-
             return false;
 
         }
@@ -290,6 +306,11 @@ public class ClientManager : MonoBehaviour
     {
         Debug.Log("Closed");
         ws.Close();
+        if (!Doing_InitConnection_test)
+        {
+            _is_Coneection_Closed = true; //初回接続時はこれ（エラー処理用のもの）は必要ない
+        }
+        
     }
 
     private void OnApplicationQuit()
@@ -299,6 +320,30 @@ public class ClientManager : MonoBehaviour
         {
             ws.Close(); //Close処理をアプリが終了するときにやる
         }
+    }
+
+
+    public IEnumerator SendWavFile(byte[] wavData, WebSocket ws, int chunkSize = 4096)
+    {
+        //GPT4が出力した音声データをチャンクに分けて送信する方法
+        // 全体のチャンク数を計算
+        int totalChunks = (int)Math.Ceiling((double)wavData.Length / chunkSize);
+
+        for (int i = 0; i < totalChunks; i++)
+        {
+            int start = i * chunkSize;
+            int end = Math.Min(start + chunkSize, wavData.Length);
+            byte[] chunk = new byte[end - start];
+            Array.Copy(wavData, start, chunk, 0, end - start);
+
+            // チャンクを送信
+            ws.Send(chunk);
+
+            // 短い待機時間を追加（サーバーがデータを受信・処理する時間を確保）
+            yield return new WaitForSeconds(0.1f); // 0.1秒待機。必要に応じて調整可能
+        }
+
+        ws.Send(Encoding.UTF8.GetBytes("")); //松原さんのws_client_test.pyを参考に、空のバイナリデータを送ることで処理が終了した・・・！！！
     }
 
 
