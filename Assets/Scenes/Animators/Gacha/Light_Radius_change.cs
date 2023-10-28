@@ -14,6 +14,8 @@ public class Light_Radius_change : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        gameObject.GetComponent<Light>().areaSize = new Vector2(shadowRadius,shadowRadius); //これがLightのフレアの広さ
+       // gameObject.GetComponent<Light>().areaSize = new Vector2(shadowRadius,shadowRadius); //これがLightのフレアの広さ
+       //↑はEditorのみで許されるらしい・・・
+
     }
 }

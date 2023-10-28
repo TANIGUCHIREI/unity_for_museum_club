@@ -108,6 +108,9 @@ public class change_wall : MonoBehaviour
             StartCoroutine(Fake_Print_Finish_Arrive());
         }
 
+        yield return new WaitForSeconds(4f);
+        //GameObject.Find("PrintingNow...").GetComponent<Animator>().enabled = true; //これで印刷しています・・・がチカチカするようになる
+
 
         IEnumerator Fake_Print_Finish_Arrive()
         {
@@ -125,7 +128,10 @@ public class change_wall : MonoBehaviour
         Canvas_for_Warning.GetComponent<Animator>().SetFloat("speed", 1); 
         Canvas_for_Warning.GetComponent<Animator>().Play("Warning", 0, 0f);
         yield return new WaitForSeconds(2.5f); //ちょっと待ってから遷移
-
+        if(SceneManager.GetActiveScene().name == "Result")
+        {
+            Now_Loading.GetComponent<Text>().enabled = false; //これしないといつまでも「Now Loading...」が出続けてしまう！
+        }
         SceneManager.LoadScene("init_menu");
 
         yield return new WaitForSeconds(2.5f);

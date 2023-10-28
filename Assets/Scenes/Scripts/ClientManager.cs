@@ -87,6 +87,9 @@ public class ClientManager : MonoBehaviour
 
             GameObject Result_EventSystem = GameObject.Find("Result_EventSystem");
             Result_EventSystem.GetComponent<change_result_panel>().StartCoroutine(Result_EventSystem.GetComponent<change_result_panel>().menu_move(speed:1000));
+
+            Debug.Log("プリントが終了されました！websocketをクローズします");
+            ws.Close();
             _isPrintFinish = false;
         }
 
@@ -292,9 +295,9 @@ public class ClientManager : MonoBehaviour
         }
         else if (Recv_Type == "PRINT_FINISH")
         {
-            Debug.Log("プリントが終了されました！websocketをクローズします");
+           
             _isPrintFinish = true;
-            ws.Close();
+            
         }else if (Recv_Type == "AUDIO")
         {
             userinput_text = (string)recv_dict["user_input"]; //音声から変換された入力テキストを受信している
@@ -306,9 +309,9 @@ public class ClientManager : MonoBehaviour
     {
         Debug.Log("Closed");
         ws.Close();
-        if (!Doing_InitConnection_test)
+        if (!Doing_InitConnection_test && !_isPrintFinish)
         {
-            _is_Coneection_Closed = true; //初回接続時はこれ（エラー処理用のもの）は必要ない
+            _is_Coneection_Closed = true; //初回接続時かつプリント終了後はこれ（エラー処理用のもの）は必要ない
         }
         
     }

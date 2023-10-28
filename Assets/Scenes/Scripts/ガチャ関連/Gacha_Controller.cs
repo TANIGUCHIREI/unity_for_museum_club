@@ -55,7 +55,7 @@ public class Gacha_Controller : MonoBehaviour
 
 
 
-        //SpotLight.GetComponent<Light>().intensity = 2f; //テスト用　ライトつけて見やすくします
+        //SpotLight.GetComponent<Light>().intensity = 2f; //ガチャカプセルのモーションテスト用　ライトつけて見やすくします
         //camera0.GetComponent<Animator>().enabled = false; //テスト用、実際は動きます
         //StartCoroutine(Gacha_Capsule_Move()); //テスト用↑とこれをコメントアウト外してください
         StartCoroutine(Camera_Motion()); //これがメインで動きます
@@ -89,17 +89,18 @@ public class Gacha_Controller : MonoBehaviour
 
     public IEnumerator Gacha_Capsule_Move()
     {
-        float r = Random.Range(0, 2); //なぜかわからんけどこんな変な値でいい感じの色になった・・・256だと真っ白、1fだと真っ黒なのに・・・意味わからんけど動くからいいや
-        float g = Random.Range(0, 2);
-        float b = Random.Range(0, 2);
+        float r = Random.Range(0.1f, 2); //なぜかわからんけどこんな変な値でいい感じの色になった・・・256だと真っ白、1fだと真っ黒なのに・・・意味わからんけど動くからいいや
+        float g = Random.Range(0.1f, 2);
+        float b = Random.Range(0.1f, 2);
         
         GameObject.Find("Sphere").GetComponent<Renderer>().sharedMaterial.color = new Color(r, g, b,1); //出るガチャの色が毎回変わります
-
+        GameObject.Find("Sphere").GetComponent<Transform>().Rotate(new Vector3(0,0, Random.Range(-180, 180)));
         audioSource.PlayOneShot(Gacha_Emit_sound);
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = false;
         yield return new WaitForSeconds(3f);
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = true;
-        Gacha_capsule.GetComponent<Rigidbody>().AddForce(new Vector3(0, -20f, -30f)); //若干初速を与える
+        yield return new WaitForSeconds(0.1f);
+        Gacha_capsule.GetComponent<Rigidbody>().AddForce(new Vector3(0, -200f, -3000f)); //若干初速を与える
         //Gacha_capsule.GetComponent<Rigidbody>().AddTorque(new Vector3(0, 0.1f, 0));
         yield return new WaitForSeconds(5.1f); //職人芸、これで多分大丈夫！
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = false; //グラビティを個々で無効にする
