@@ -292,7 +292,12 @@ public class change_wall : MonoBehaviour
     }
 
 
-
+    /*
+    IEnumerator Change_Scene_move()
+    {
+        List<(GameObject,)>
+    }
+    */
     //ポケモン風戦闘シーンから持ってきたやつ
     IEnumerator Relative_Line_move(GameObject obj, float angle, float length, float mov_time)
     {

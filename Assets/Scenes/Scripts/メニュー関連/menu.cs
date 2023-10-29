@@ -29,17 +29,20 @@ public class menu : MonoBehaviour
     public GameObject User_Input_Field;
     public GameObject Record_Button;
 
+    public GameObject BackGroud_WallPaper;
     public float back_treshhold_time = 0;
     public bool menu_moving = false; //連打して動いちゃわない用のやつ
 
     public float ViewportScreenWidth;
     //public GameObject cameraobj;
     //public Camera cam;
-    public float speed = 0;
+    private float speed = 5f;
+    private float background_moving_speed = 30f;
 
     public GameObject Canvas_for_Confirmation;
     public GameObject Input_Confirmation;
     public GameObject Canvas_for_Recording;
+    public GameObject Blined_Panel;
     public bool _isOmakase;
     public bool _isKansaiOnly = true;
 
@@ -80,6 +83,10 @@ public class menu : MonoBehaviour
         change_walls = GameObject.Find("change_walls"); //なんか仏ーにserialized fielndからやっていると、シーン遷移の段階で消えてしまう
         init_camera = GameObject.Find("Init_Camera");
 
+        Blined_Panel = GameObject.Find("Blined_Panel");
+
+        StartCoroutine(BackGround_WallPaper_Rotation(speed:2f)); //背景を回転させる（ただの装飾）
+
     }
 
     // Update is called once per frame
@@ -90,6 +97,15 @@ public class menu : MonoBehaviour
         {
             back_treshhold_time -= 0.03f;
             //Debug.Log(back_treshhold_time);
+        }
+
+        if (menu_moving)
+        {
+            Blined_Panel.GetComponent<Image>().raycastTarget = true; //超アナログだけど、動いてるときはボタンを押せないようにしてる（負荷大きそう・・・）
+        }
+        else
+        {
+            Blined_Panel.GetComponent<Image>().raycastTarget = false ;
         }
     }
 
@@ -156,6 +172,7 @@ public class menu : MonoBehaviour
         menu2_1.SetActive(true);
         menu2_2.SetActive(false);
         StartCoroutine(menu_move(-speed));
+        StartCoroutine(BackGround_WallPaper_move(speed: background_moving_speed));
     }
 
     public void Change_to_2_2()
@@ -164,6 +181,7 @@ public class menu : MonoBehaviour
         menu2_2.SetActive(true);
         menu2_1.SetActive(false);
         StartCoroutine(menu_move(-speed));
+        StartCoroutine(BackGround_WallPaper_move(speed: background_moving_speed));
     }
 
     public void Change_to_3()
@@ -179,6 +197,7 @@ public class menu : MonoBehaviour
             //メニューが１ではなく2_1とか2_2とか3ならバックできる
             //speed分translateさせて動くから、実際には若干座標がずれることに注意
             StartCoroutine(menu_move(speed));
+            StartCoroutine(BackGround_WallPaper_move(speed: -background_moving_speed));
         }
         
     }
@@ -245,7 +264,7 @@ public class menu : MonoBehaviour
         {
             //Debug.Log(Mathf.Abs(menus_position_x - init_x));
             //Debug.Log(menus.GetComponent<RectTransform>().anchoredPosition.x);
-            menus.GetComponent<RectTransform>().Translate(speed, 0, 0);
+            menus.GetComponent<RectTransform>().Translate(speed*Time.deltaTime, 0, 0);
             menus_position_x = menus.GetComponent<RectTransform>().anchoredPosition.x;
             yield return null; //これすることで画面に出力されるようになる
         }
@@ -253,5 +272,35 @@ public class menu : MonoBehaviour
         yield break;
     }
 
-   
+    IEnumerator BackGround_WallPaper_move(float speed = 10f)
+    {
+        
+        while (menu_moving)
+        {
+            //BackGroud_WallPaper.GetComponent<Transform>().transform.Rotate(new Vector3(0, 0, speed*Time.deltaTime));//とにかく背景を回転させる！
+            BackGroud_WallPaper.GetComponent<Transform>().transform.position += new Vector3(speed * -0.06f*Time.deltaTime, 0,0);
+            yield return null; 
+        }
+        
+
+    }
+
+    IEnumerator BackGround_WallPaper_Rotation(float speed = 10f)
+    {
+
+        while (true)
+        {
+           
+                BackGroud_WallPaper.GetComponent<Transform>().transform.Rotate(new Vector3(0, 0, speed * Time.deltaTime));//とにかく背景を回転させる！
+                
+            
+
+            yield return null;
+
+        }
+
+
+    }
+
+
 }
