@@ -30,6 +30,7 @@ public class menu : MonoBehaviour
     public GameObject Record_Button;
 
     public GameObject BackGroud_WallPaper;
+    public GameObject BackGroud_WallPaper2;
     public float back_treshhold_time = 0;
     public bool menu_moving = false; //˜A‘Å‚µ‚Ä“®‚¢‚¿‚á‚í‚È‚¢—p‚Ì‚â‚Â
 
@@ -85,7 +86,7 @@ public class menu : MonoBehaviour
 
         Blined_Panel = GameObject.Find("Blined_Panel");
 
-        StartCoroutine(BackGround_WallPaper_Rotation(speed:2f)); //”wŒi‚ğ‰ñ“]‚³‚¹‚éi‚½‚¾‚Ì‘•üj
+        StartCoroutine(BackGround_WallPaper_Rotation(speed:1f)); //”wŒi‚ğ‰ñ“]‚³‚¹‚éi‚½‚¾‚Ì‘•üj
 
     }
 
@@ -279,6 +280,7 @@ public class menu : MonoBehaviour
         {
             //BackGroud_WallPaper.GetComponent<Transform>().transform.Rotate(new Vector3(0, 0, speed*Time.deltaTime));//‚Æ‚É‚©‚­”wŒi‚ğ‰ñ“]‚³‚¹‚éI
             BackGroud_WallPaper.GetComponent<Transform>().transform.position += new Vector3(speed * -0.06f*Time.deltaTime, 0,0);
+            BackGroud_WallPaper2.GetComponent<Transform>().transform.position += new Vector3(speed * -0.03f * Time.deltaTime, 0, 0);
             yield return null; 
         }
         
@@ -287,20 +289,12 @@ public class menu : MonoBehaviour
 
     IEnumerator BackGround_WallPaper_Rotation(float speed = 10f)
     {
-
-        while (true)
+      while (true)
         {
            
-                BackGroud_WallPaper.GetComponent<Transform>().transform.Rotate(new Vector3(0, 0, speed * Time.deltaTime));//‚Æ‚É‚©‚­”wŒi‚ğ‰ñ“]‚³‚¹‚éI
-                
-            
-
+            BackGroud_WallPaper.GetComponent<Transform>().transform.Rotate(new Vector3(0, 0, speed * Time.deltaTime));//‚Æ‚É‚©‚­”wŒi‚ğ‰ñ“]‚³‚¹‚éI
+            BackGroud_WallPaper2.GetComponent<Transform>().transform.Rotate(new Vector3(0, 0, -speed * Time.deltaTime));//‚Æ‚É‚©‚­”wŒi‚ğ‰ñ“]‚³‚¹‚éI
             yield return null;
-
         }
-
-
     }
-
-
 }
