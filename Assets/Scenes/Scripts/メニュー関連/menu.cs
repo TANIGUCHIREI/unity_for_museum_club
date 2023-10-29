@@ -103,10 +103,7 @@ public class menu : MonoBehaviour
         {
             Blined_Panel.GetComponent<Image>().raycastTarget = true; //超アナログだけど、動いてるときはボタンを押せないようにしてる（負荷大きそう・・・）
         }
-        else
-        {
-            Blined_Panel.GetComponent<Image>().raycastTarget = false ;
-        }
+     
     }
 
     public void OnSearchButtonOn()
@@ -269,6 +266,7 @@ public class menu : MonoBehaviour
             yield return null; //これすることで画面に出力されるようになる
         }
         menu_moving = false;
+        Blined_Panel.GetComponent<Image>().raycastTarget = false;
         yield break;
     }
 
