@@ -14,6 +14,8 @@ public class Gacha_Controller : MonoBehaviour
     public AudioClip shutter_sound;
     public AudioClip SpotLight_sound;
     public AudioClip Gacha_Emit_sound;
+    
+    public AudioClip Gacha_Thinking_Dancing;
     public GameObject Lamps;
     public GameObject Finish_Lamp;
     AudioSource audioSource;
