@@ -113,6 +113,8 @@ public class ClientManager : MonoBehaviour
             StartCoroutine(Change_walls_UI.GetComponent<change_wall>().Connection_Error_and_change_to_menu());
             _is_Coneection_Closed = false;
         }
+
+      
     }
 
     
