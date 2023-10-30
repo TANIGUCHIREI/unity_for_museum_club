@@ -47,6 +47,7 @@ public class menu : MonoBehaviour
     public bool _isOmakase;
     public bool _isKansaiOnly = true;
 
+   
 
     // Start is called before the first frame update
     void Start()
@@ -293,6 +294,17 @@ public class menu : MonoBehaviour
             BackGroud_WallPaper.GetComponent<Transform>().transform.Rotate(new Vector3(0, 0, speed * Time.deltaTime));//‚Æ‚É‚©‚­”wŒi‚ğ‰ñ“]‚³‚¹‚éI
             BackGroud_WallPaper2.GetComponent<Transform>().transform.Rotate(new Vector3(0, 0, -speed * Time.deltaTime));//‚Æ‚É‚©‚­”wŒi‚ğ‰ñ“]‚³‚¹‚éI
             yield return null;
+        }
+    }
+
+    public IEnumerator VolumeDown()
+    {
+        AudioSource audioSource = gameObject.GetComponent<AudioSource>();
+
+        while (audioSource.volume > 0)
+        {
+            audioSource.volume -= 0.01f;
+            yield return new WaitForSeconds(0.1f);
         }
     }
 }

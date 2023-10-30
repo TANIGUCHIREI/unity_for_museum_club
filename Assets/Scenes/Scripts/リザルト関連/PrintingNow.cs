@@ -22,7 +22,7 @@ public class PrintingNow : MonoBehaviour
     }
     IEnumerator Blinking_Text()
     {
-        yield return new WaitForSeconds(8f); //すべてが表示されるまでの待ち時間
+        yield return new WaitForSeconds(7.5f); //すべてが表示されるまでの待ち時間
         gameObject.GetComponent<Animator>().enabled = true; //これで印刷しています・・・がチカチカするようになる
         yield return new WaitForSeconds(0.5f);
         while (true)

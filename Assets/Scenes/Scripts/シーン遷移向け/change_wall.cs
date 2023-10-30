@@ -25,7 +25,10 @@ public class change_wall : MonoBehaviour
 
     public bool _isWall_Moving = false; //今回は使ってません！
     // Start is called before the first frame update
-
+    AudioSource audioSource;
+    public AudioClip result_bgm;
+    public AudioClip Gacha_BackGround_bgm;
+    public float Audio_Volume = 0.3f;
     void Awake()
     {
         //DontDestroyOnLoad(gameObject);
@@ -39,7 +42,9 @@ public class change_wall : MonoBehaviour
         //Debug.Log(Screen.width);
         Blined_Panel.GetComponent<Image>().raycastTarget = false;
         Now_Loading.GetComponent<Text>().enabled = false; //now loadingは初めは表示されないように
-        
+        gameObject.GetComponent<AudioSource>().volume = Audio_Volume;
+
+        audioSource = gameObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -51,6 +56,7 @@ public class change_wall : MonoBehaviour
 
     public void change_2_3()
     {
+        StartCoroutine(GameObject.Find("EventSystem").GetComponent<menu>().VolumeDown());
         //buttonではIEnumeratorがなんか見つからなかったからその対策用
         StartCoroutine(menu_change2_to_3());
     }
@@ -69,8 +75,10 @@ public class change_wall : MonoBehaviour
 
     public IEnumerator change_3_to_result()
     {
-        yield return new WaitForSeconds(2f);
+        StartCoroutine(VolumeDown()); //やっちゃった！の音量を小さくして結果画面へ
+        yield return new WaitForSeconds(5f);
         Now_Loading.GetComponent<Text>().enabled = true;
+        //yield return new WaitForSeconds(1f); //Gachaシーンでの最後の待ち！
         while (true)
         {
             if (_isAnserArrive)
@@ -84,7 +92,13 @@ public class change_wall : MonoBehaviour
         Now_Loading.GetComponent<Text>().enabled = false;
         SceneManager.LoadScene("Result"); //これでリザルト画面へ遷移！
         yield return new WaitForSeconds(1f); //時間置いたほうがいいかなと思って
-        
+
+        gameObject.GetComponent<AudioSource>().volume = Audio_Volume; //リザルト画面の音楽再生開始！のためにまずはボリュームを戻す
+        gameObject.GetComponent<AudioSource>().clip = result_bgm;
+        gameObject.GetComponent<AudioSource>().Play(); //やっちゃた！の再生開始
+        //audioSource.PlayOneShot(result_bgm);
+
+
         TMP_Text museum_name = GameObject.Find("museum_name").GetComponent<TMP_Text>();
         TMP_Text exhibition_type = GameObject.Find("exhibition_type").GetComponent<TMP_Text>();
         TMP_Text prefecture = GameObject.Find("prefecture").GetComponent<TMP_Text>();
@@ -116,7 +130,7 @@ public class change_wall : MonoBehaviour
 
         IEnumerator Fake_Print_Finish_Arrive()
         {
-            float WaitTime = Random.Range(5f, 10f);
+            float WaitTime = Random.Range(15f, 20f);
             yield return new WaitForSeconds(WaitTime); //疑似的に待ち時間を作る
             init_camera.GetComponent<ClientManager>()._isPrintFinish = true;
 
@@ -129,6 +143,7 @@ public class change_wall : MonoBehaviour
     {
         Canvas_for_Warning.GetComponent<Animator>().SetFloat("speed", 1); 
         Canvas_for_Warning.GetComponent<Animator>().Play("Warning", 0, 0f);
+        StartCoroutine(VolumeDown());
         yield return new WaitForSeconds(2.5f); //ちょっと待ってから遷移
         if(SceneManager.GetActiveScene().name == "Result")
         {
@@ -182,8 +197,10 @@ public class change_wall : MonoBehaviour
       
 
 
-        yield return new WaitForSeconds(0.5f);
-
+        yield return new WaitForSeconds(3f); //扉を開くまでの時間
+        gameObject.GetComponent<AudioSource>().volume = Audio_Volume; //これがないとならない！
+        gameObject.GetComponent<AudioSource>().clip = Gacha_BackGround_bgm;
+        gameObject.GetComponent<AudioSource>().Play(); //やっちゃた！の再生開始
         //GameObject User_Input_Text = GameObject.Find("User_Input_Text"); //ここからの処理でUserInputがガチャの入力用紙に反映されるようにする、Wwaitの後に置かないとNullReferenceになる！
         string userinput_text = init_camera.GetComponent<ClientManager>().userinput_text;
         //User_Input_Text.GetComponent<TMP_Text>().text = "「" + userinput_text + "」\n";
@@ -280,18 +297,20 @@ public class change_wall : MonoBehaviour
 
     public IEnumerator change_Result_to_menu()
     {
+        StartCoroutine(VolumeDown()); //bgmをフェードアウト
         _isWall_Moving = true;
         Blined_Panel.GetComponent<Image>().raycastTarget = true;
 
         StartCoroutine(Relative_Line_move(obj: black_wall, 0, Screen.width + 100, move_time)); //yield returnしないとyiledしないのですぐに下の処理が始まる
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: white_wall, 180, Screen.width + 100, move_time));
+        yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("init_menu");
 
         init_camera.GetComponent<Camera>().orthographic = true; //これすることで並行図法から透視図法になる
         init_camera.GetComponent<User_Input>().Reset_Inputs(); //これでインプットをリセット!
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(2f);
 
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
@@ -330,4 +349,17 @@ public class change_wall : MonoBehaviour
         }
         yield break;
     }
+
+    public IEnumerator VolumeDown()
+    {
+        
+
+        while (audioSource.volume > 0)
+        {
+            audioSource.volume -= 0.01f;
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+
 }

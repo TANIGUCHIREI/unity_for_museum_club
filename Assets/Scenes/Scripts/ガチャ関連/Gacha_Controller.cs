@@ -168,6 +168,7 @@ public class Gacha_Controller : MonoBehaviour
     
     IEnumerator Camera_Motion()
     {
+        yield return new WaitForSeconds(3f);
         camera0.GetComponent<Animator>().speed = 0;
         yield return new WaitForSeconds(4.0f);
         audioSource.PlayOneShot(SpotLight_sound);

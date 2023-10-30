@@ -89,8 +89,18 @@ public class ClientManager : MonoBehaviour
             Result_EventSystem.GetComponent<change_result_panel>().StartCoroutine(Result_EventSystem.GetComponent<change_result_panel>().menu_move(speed:1000));
 
             Debug.Log("プリントが終了されました！websocketをクローズします");
-            ws.Close();
             _isPrintFinish = false;
+
+            /*
+
+            if (!_isStandAloneModeOne)
+            {
+                ws.Close(); //スタンドアロンモードでないのならコネクションを消す！
+            }
+
+            */
+           
+           
         }
 
         if (_isAudio_Input_Converted_Arrive)

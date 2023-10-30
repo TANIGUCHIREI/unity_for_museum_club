@@ -31,7 +31,7 @@ public class change_result_panel : MonoBehaviour
         //menusはtransformはrectのほうが扱いやすい・・・というかそっちが解像度で管理されているのでそちらで処理します
         float init_x = Results.GetComponent<RectTransform>().anchoredPosition.x;
         float menus_position_x = init_x;
-        Debug.Log("速度:" + speed);
+        Debug.Log("Resultの画面が動いています・・・");
         while (Mathf.Abs(menus_position_x - init_x) < Screen.width)
         {
 
