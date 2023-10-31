@@ -6,7 +6,6 @@ using System.Text;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using TMPro;
 using System.Threading.Tasks;　//非同期にwebsocketでつうしんを行うためのもの
 
@@ -17,6 +16,7 @@ public class Setting_Menu : MonoBehaviour
     public WebSocket ws;
     GameObject Input_IPAdress;
     GameObject Input_Port;
+    public Slider mainSlider;
     public GameObject StandAloneModeToggle;
 
     public TMP_Text Status_Text;
@@ -37,10 +37,12 @@ public class Setting_Menu : MonoBehaviour
         //Debug.Log(Input_IPAdress.name);
         StandAloneModeToggle = GameObject.Find("StandAloneModeToggle");
         Status_Text = GameObject.Find("Status_Text").GetComponent<TMP_Text>();
-        
+
         //Debug.Log("ws://" + IPAdress + ":" + Port + "/");
 
-       
+        mainSlider.onValueChanged.AddListener(delegate { OnVolume_Slider_Changed(); });
+
+
 
     }
 
@@ -48,6 +50,12 @@ public class Setting_Menu : MonoBehaviour
     void Update()
     {
         Status_Text.text = show_text;
+    }
+
+    public void OnVolume_Slider_Changed()
+    {
+        Debug.Log(mainSlider.value);
+        mainSlider.GetComponentInChildren<TMP_Text>().text = "bgm volume: " + Mathf.CeilToInt((100*mainSlider.value)).ToString() + "%";
     }
 
     public void OnBackToMenuOn()
@@ -154,5 +162,7 @@ public class Setting_Menu : MonoBehaviour
         Debug.Log("サーバーとの接続が切れました");
         ws.Close();
     }
+
+   
 
 }

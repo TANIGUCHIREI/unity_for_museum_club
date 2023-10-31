@@ -2949,9 +2949,12 @@ MonoBehaviour:
   - "\u3053\u308C\u306F"
   - "\u30C6\u30B9\u30C8\u7528\u306E"
   - "\u30AF\u30A8\u30EA\u30FC\u3067\u3059\uFF01\uFF01\uFF01"
+  - "\u30AF\u30A8\u30EA\u30FC\u3067\u3059\uFF01\uFF01\uFF01"
+  - "\u30AF\u30A8\u30EA\u30FC\u3067\u3059\uFF01\uFF01\uFF01"
   Query_Text_Instance: {fileID: 8103555958915040577, guid: a6b07027f3038b9428530ed85ae2f104, type: 3}
   Gacha_capsule: {fileID: 0}
   White_Blined_Circle: {fileID: 0}
+  Change_walls_UI: {fileID: 0}
   _isQueryArrive: 0
   _isPaperInsertFinish: 0
   _isQueryShowEnd: 0

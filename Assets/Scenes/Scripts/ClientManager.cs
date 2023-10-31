@@ -112,7 +112,8 @@ public class ClientManager : MonoBehaviour
             Record_Button.GetComponent<VoiceRecorder>()._is_convert_to_text_finish = true;
             InputField.GetComponent<TMP_InputField>().text = userinput_text;
             menu_EventSystem.GetComponent<menu>().OnRecordingBackOn(); //ポップアップを戻す
-            
+            menu_EventSystem.GetComponent<AudioSource>().Play(); //受信完了！の効果音を流す
+
             _isAudio_Input_Converted_Arrive = false;
         }
 

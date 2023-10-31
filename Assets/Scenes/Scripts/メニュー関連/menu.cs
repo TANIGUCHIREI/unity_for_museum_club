@@ -148,7 +148,7 @@ public class menu : MonoBehaviour
     public void OnRecordingBackOn()
     {
         GameObject Canvas_for_Recording = GameObject.Find("Canvas_for_Recording");
-
+        
         Canvas_for_Recording.GetComponent<Animator>().SetFloat("speed", -1); //これで再生を逆向きにする・・・？
         Canvas_for_Recording.GetComponent<Animator>().Play("Menu_Recoding", 0, 1f); //1fは最後ということ・最後から逆向き（－１）に再生する
         //Canvas_for_Confirmation.SetActive(false); 

@@ -94,6 +94,7 @@ public class Gacha_Controller : MonoBehaviour
 
     public IEnumerator Gacha_Capsule_Move()
     {
+        
         float r = Random.Range(0.1f, 2); //なぜかわからんけどこんな変な値でいい感じの色になった・・・256だと真っ白、1fだと真っ黒なのに・・・意味わからんけど動くからいいや
         float g = Random.Range(0.1f, 2);
         float b = Random.Range(0.1f, 2);
@@ -102,6 +103,14 @@ public class Gacha_Controller : MonoBehaviour
         GameObject.Find("Sphere").GetComponent<Transform>().Rotate(new Vector3(0,0, Random.Range(-180, 180)));
         audioSource.PlayOneShot(Gacha_Emit_sound);
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = false;
+
+        yield return new WaitForSeconds(0.3f);
+
+        Change_walls_UI.GetComponent<AudioSource>().clip = Change_walls_UI.GetComponent<change_wall>().Gacha_result_bgm;
+        Change_walls_UI.GetComponent<AudioSource>().Play();//ガチャ出るときのかっこいい音を再生
+        Change_walls_UI.GetComponent<AudioSource>().loop = false;
+
+
         yield return new WaitForSeconds(3f);
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = true;
         yield return new WaitForSeconds(0.1f);
@@ -112,7 +121,7 @@ public class Gacha_Controller : MonoBehaviour
         
        Debug.Log(Gacha_capsule.transform.position.y);
 
-        float speed = 1.5f; // 1秒あたり0.5ユニットの速度で動かす、IEnumeratorで動作速度を一定にするための策
+        float speed = 2f; // 1秒あたり0.5ユニットの速度で動かす、IEnumeratorで動作速度を一定にするための策
         while (Gacha_capsule.transform.position.y < 7f)
         {
             //Debug.Log(Gacha_capsule.transform.position.y);
@@ -122,11 +131,11 @@ public class Gacha_Controller : MonoBehaviour
 
         }
 
-        Gacha_capsule.GetComponent<Animator>().speed = 0.7f; //再生開始、若干おそめにするのがよいような
+        Gacha_capsule.GetComponent<Animator>().speed = 0.8f; //再生開始、若干おそめにするのがよいような
         yield return new WaitForSeconds(2f);
         White_Blined_Circle.GetComponent<Animator>().speed = 1; //これで画面真っ白になる！
 
-        GameObject Change_walls_UI = GameObject.Find("Change_walls_UI");
+      
         Change_walls_UI.GetComponent<change_wall>().StartCoroutine(Change_walls_UI.GetComponent<change_wall>().change_3_to_result()); //画面遷移の開始
 
     }
@@ -173,9 +182,10 @@ public class Gacha_Controller : MonoBehaviour
     
     IEnumerator Camera_Motion()
     {
-        yield return new WaitForSeconds(3f);
+        
         camera0.GetComponent<Animator>().speed = 0;
-        yield return new WaitForSeconds(4.0f);
+        yield return new WaitForSeconds(10f);
+        //yield return new WaitForSeconds(4.0f);
         audioSource.PlayOneShot(SpotLight_sound);
         SpotLight.GetComponent<Light>().intensity = 2f;
         yield return new WaitForSeconds(2.0f);
@@ -280,7 +290,7 @@ public class Gacha_Controller : MonoBehaviour
     {
 
         float init_background_bgm_volume = Change_walls_UI.GetComponent<AudioSource>().volume;
-        Change_walls_UI.GetComponent<AudioSource>().volume *= 0.3f; //バックグラウンドの音量を小さく！
+        StartCoroutine(Change_walls_UI.GetComponent<change_wall>().VolumeDown(DownTo:0.05f)); //バックグラウンドの音量を小さく！
 
         GameObject Gacha = GameObject.Find("ガチャガチャ台");
         gameObject.GetComponent<AudioSource>().clip = Gacha_Thinking_Dancing;
@@ -312,9 +322,9 @@ public class Gacha_Controller : MonoBehaviour
         //クエリがきてダンシングを停止した後、元の大きさに戻す！
         gameObject.GetComponent<AudioSource>().Stop();
         //yield return new WaitForSeconds(0.5f);
-        gameObject.GetComponent<AudioSource>().PlayOneShot(ElectroMagnetic_wave_sound);
+        
 
-        Change_walls_UI.GetComponent<AudioSource>().volume = init_background_bgm_volume; //バックグラウンドミュージックの音量を戻す！
+        StartCoroutine(Change_walls_UI.GetComponent<change_wall>().VolumeUp()); //バックグラウンドミュージックの音量を徐々に戻す！
 
         if (Gacha.GetComponent<Transform>().transform.localScale.y > init_size.y)
         {
@@ -333,7 +343,9 @@ public class Gacha_Controller : MonoBehaviour
                 yield return null;
             }
         }
-        
+
+        gameObject.GetComponent<AudioSource>().PlayOneShot(ElectroMagnetic_wave_sound);
+
 
     }
 }

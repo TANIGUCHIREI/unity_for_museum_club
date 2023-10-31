@@ -36,5 +36,7 @@ public class Button_On_Effect : MonoBehaviour
             gameObject.GetComponent<RectTransform>().localScale -= speed * Time.deltaTime * new Vector3(1f, 1f, 1f);
             yield return null;
         }
+
+        gameObject.GetComponent<RectTransform>().localScale = init_size; //ç≈å„Ç…ê≥ämÇ»ílÇ…ñﬂÇ∑
     }
 }

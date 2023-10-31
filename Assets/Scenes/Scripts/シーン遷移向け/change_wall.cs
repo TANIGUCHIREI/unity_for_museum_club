@@ -28,7 +28,12 @@ public class change_wall : MonoBehaviour
     AudioSource audioSource;
     public AudioClip result_bgm;
     public AudioClip Gacha_BackGround_bgm;
+    public AudioClip menu_bgm;
+    public AudioClip Gacha_result_bgm;
     public float Audio_Volume = 0.3f;
+    public float Init_Audio_Volume;
+    public float Multiply_Volume_value = 1;
+
     void Awake()
     {
         //DontDestroyOnLoad(gameObject);
@@ -39,24 +44,35 @@ public class change_wall : MonoBehaviour
     }
     void Start()
     {
+        Init_Audio_Volume = Audio_Volume; //このInitのやつにMultipyをかけていく形で、値が収束するのを回避する
         //Debug.Log(Screen.width);
         Blined_Panel.GetComponent<Image>().raycastTarget = false;
         Now_Loading.GetComponent<Text>().enabled = false; //now loadingは初めは表示されないように
         gameObject.GetComponent<AudioSource>().volume = Audio_Volume;
 
         audioSource = gameObject.GetComponent<AudioSource>();
+
+        audioSource.volume = Audio_Volume;  
+        audioSource.clip = menu_bgm;
+        audioSource.Play();  //はじめのやつ流す
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        
+        if(SceneManager.GetActiveScene().name == "Setting_Menu" && !_isWall_Moving)
+        {
+
+            Multiply_Volume_value = GameObject.Find("Volume_Slider").GetComponent<Slider>().value;
+            Audio_Volume = Multiply_Volume_value * Init_Audio_Volume; //これで値を変更
+            audioSource.volume = Audio_Volume;
+        }
     }
 
 
     public void change_2_3()
     {
-        StartCoroutine(GameObject.Find("EventSystem").GetComponent<menu>().VolumeDown());
+        //StartCoroutine(GameObject.Find("EventSystem").GetComponent<menu>().VolumeDown());
         //buttonではIEnumeratorがなんか見つからなかったからその対策用
         StartCoroutine(menu_change2_to_3());
     }
@@ -76,6 +92,7 @@ public class change_wall : MonoBehaviour
     public IEnumerator change_3_to_result()
     {
         StartCoroutine(VolumeDown()); //やっちゃった！の音量を小さくして結果画面へ
+        
         yield return new WaitForSeconds(5f);
         Now_Loading.GetComponent<Text>().enabled = true;
         //yield return new WaitForSeconds(1f); //Gachaシーンでの最後の待ち！
@@ -95,10 +112,11 @@ public class change_wall : MonoBehaviour
 
         gameObject.GetComponent<AudioSource>().volume = Audio_Volume; //リザルト画面の音楽再生開始！のためにまずはボリュームを戻す
         gameObject.GetComponent<AudioSource>().clip = result_bgm;
-        gameObject.GetComponent<AudioSource>().Play(); //やっちゃた！の再生開始
-                                                       //audioSource.PlayOneShot(result_bgm);
+        gameObject.GetComponent<AudioSource>().Play();
+        gameObject.GetComponent<AudioSource>().loop = true;
+        //audioSource.PlayOneShot(result_bgm);
 
-        yield return new WaitForSeconds(1.5f); //時間置いたほうがいいかなと思って
+        yield return new WaitForSeconds(3f); //時間置いたほうがいいかなと思って
         TMP_Text museum_name = GameObject.Find("museum_name").GetComponent<TMP_Text>();
         TMP_Text exhibition_type = GameObject.Find("exhibition_type").GetComponent<TMP_Text>();
         TMP_Text prefecture = GameObject.Find("prefecture").GetComponent<TMP_Text>();
@@ -150,6 +168,8 @@ public class change_wall : MonoBehaviour
             Now_Loading.GetComponent<Text>().enabled = false; //これしないといつまでも「Now Loading...」が出続けてしまう！
         }
         SceneManager.LoadScene("init_menu");
+        yield return new WaitForSeconds(.2f);
+        
 
         yield return new WaitForSeconds(2.5f);
         init_camera.GetComponent<Camera>().orthographic = true; //これすることで並行図法から透視図法になる
@@ -159,12 +179,16 @@ public class change_wall : MonoBehaviour
         Canvas_for_Warning.GetComponent<Animator>().Play("Warning", 0, 1f);
 
         init_camera.GetComponent<ClientManager>().Start_func(); //これ１つにまとめました!
+        audioSource.volume = Audio_Volume;
+        audioSource.clip = menu_bgm;
+        audioSource.Play();  //はじめのやつ流す
 
 
     }
     IEnumerator menu_change2_to_3()
     {
         _isWall_Moving = true;
+        StartCoroutine(VolumeDown()); //bgmをフェードアウト
         //まずは入力された文字と関西or関西じゃない　の情報をClientManagerへ伝える
         GameObject Menu = GameObject.Find("EventSystem");
         init_camera.GetComponent<ClientManager>()._is_kansai_only = Menu.GetComponent<menu>()._isKansaiOnly;
@@ -254,9 +278,12 @@ public class change_wall : MonoBehaviour
         GameObject Inputfield_IPAdress = GameObject.Find("InputField_IPAdress");
         GameObject InputField_Port = GameObject.Find("InputField_Port");
         GameObject StandAloneModeToggle = GameObject.Find("StandAloneModeToggle");
+        GameObject.Find("Volume_Slider").GetComponent<Slider>().value = Multiply_Volume_value;
+        GameObject.Find("Volume_Slider").GetComponentInChildren<TMP_Text>().text = "bgm volume: " + Mathf.CeilToInt((100 * Multiply_Volume_value)).ToString() + "%";
         Inputfield_IPAdress.GetComponent<TMP_InputField>().text = init_camera.GetComponent<ClientManager>().IPAdress;
         InputField_Port.GetComponent<TMP_InputField>().text = init_camera.GetComponent<ClientManager>().Port;
         StandAloneModeToggle.GetComponent<Toggle>().isOn = init_camera.GetComponent<ClientManager>()._isStandAloneModeOne;
+        
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(Relative_Line_move(obj: black_wall, 180, Screen.width + 100, move_time));
@@ -313,6 +340,10 @@ public class change_wall : MonoBehaviour
         init_camera.GetComponent<Camera>().orthographic = true; //これすることで並行図法から透視図法になる
         init_camera.GetComponent<User_Input>().Reset_Inputs(); //これでインプットをリセット!
 
+        audioSource.volume = Audio_Volume;
+        audioSource.clip = menu_bgm;
+        audioSource.Play();  //はじめのやつ流す
+
         yield return new WaitForSeconds(2f);
 
         StartCoroutine(Relative_Line_move(obj: white_wall, 0, Screen.width + 100, move_time));
@@ -353,13 +384,28 @@ public class change_wall : MonoBehaviour
         yield break;
     }
 
-    public IEnumerator VolumeDown()
+    public IEnumerator VolumeDown(float DownTo = 0f)
     {
         
 
-        while (audioSource.volume > 0)
+        while (audioSource.volume > DownTo)
         {
-            audioSource.volume -= 0.01f;
+            audioSource.volume -= 0.01f* Multiply_Volume_value;
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    public IEnumerator VolumeUp(float UpTo = 0.3f)
+    {
+        if(UpTo == 0.3f)
+        {
+            UpTo = Audio_Volume; //初期値の場合は今現在のAudio_Volumeの値に変換する（float UpTo =Audio_Volumeができなかったのでそのかわりに代用）
+        }
+  
+
+        while (audioSource.volume < UpTo)
+        {
+            audioSource.volume += 0.01f * Multiply_Volume_value;
             yield return new WaitForSeconds(0.1f);
         }
     }
