@@ -13,6 +13,7 @@ public class Gacha_Insert_Paper : MonoBehaviour
     bool alredy_working = false;
     GameObject User_Input_Text;
     GameObject Gacha_Event;
+    public AudioClip Inserting_Machine_Sound;
     
     public string Text; //Textはchange_walls.csでmenu２から３に遷移するときにユーザーインプットに変わる
     void Start()
@@ -71,6 +72,7 @@ public class Gacha_Insert_Paper : MonoBehaviour
         
 
         GetComponent<Animator>().speed = 0; //まずはアニメーションの動作を停止
+        gameObject.GetComponent<AudioSource>().Play();
         string[] characters = Text.Select(c => c.ToString()).ToArray();
         foreach (string word in characters)
         {
@@ -79,8 +81,17 @@ public class Gacha_Insert_Paper : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
 
+        gameObject.GetComponent<AudioSource>().Stop(); //タイピング音再生停止
+        yield return new WaitForSeconds(1f); //文字入力が終了して、インサートされるまでの時間
         GetComponent<Animator>().speed = 1; //アニメーション再開
-        yield return new WaitForSeconds(3f); //インサートされるまでの時間
-        Gacha_Event.GetComponent<Gacha_Controller>()._isPaperInsertFinish = true; 
+        yield return new WaitForSeconds(2f); //音がなるまでの時間
+        gameObject.GetComponent<AudioSource>().clip = Inserting_Machine_Sound;
+        gameObject.GetComponent<AudioSource>().Play();
+        yield return new WaitForSeconds(4f); //インサート始まってから待つ時間
+
+
+        Gacha_Event.GetComponent<Gacha_Controller>()._isPaperInsertFinish = true;
+        yield return new WaitForSeconds(2.5f);
+        gameObject.GetComponent<AudioSource>().Stop();
     }
 }

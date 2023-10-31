@@ -14,6 +14,7 @@ public class Gacha_Controller : MonoBehaviour
     public AudioClip shutter_sound;
     public AudioClip SpotLight_sound;
     public AudioClip Gacha_Emit_sound;
+    public AudioClip ElectroMagnetic_wave_sound;
     
     public AudioClip Gacha_Thinking_Dancing;
     public GameObject Lamps;
@@ -21,11 +22,12 @@ public class Gacha_Controller : MonoBehaviour
     AudioSource audioSource;
     GameObject Rotate_Arrow;
     public GameObject SpotLight;
-    //public List<string> QUERY = new List<string>() { "これは", "テスト用の", "クエリーです！！！", "まぁどんなものが", "くるのか", "わかりませんけど", "こまっちまう", "ネタ切れ", "のび太", "hogehoge", "querys" };
-    public List<string> QUERY = new List<string>() { "感嘆のためこれだけ！！！" };
+    public List<string> QUERY = new List<string>() { "これは", "テスト用の", "クエリーです！！！", "まぁどんなものが", "くるのか", "わかりませんけど", "こまっちまう", "ネタ切れ", "のび太", "hogehoge", "querys" };
+    //public List<string> QUERY = new List<string>() { "感嘆のためこれだけ！！！" };
     public GameObject Query_Text_Instance;
     public GameObject Gacha_capsule;
     public GameObject White_Blined_Circle; //リザルト画面への遷移用、ホワイト
+    public GameObject Change_walls_UI;
     public bool _isQueryArrive = false;
     public bool _isPaperInsertFinish = false;
     public bool _isQueryShowEnd = false;
@@ -34,6 +36,7 @@ public class Gacha_Controller : MonoBehaviour
     {
         Init_Camera = GameObject.Find("Init_Camera"); //�͂��߂�������p���ꂽ���
         SpotLight = GameObject.Find("Directional Light");
+        Change_walls_UI = GameObject.Find("Change_walls_UI");
         SpotLight.GetComponent<Light>().intensity = 0f;
         camera0.SetActive(true);
         camera1.SetActive(false);
@@ -206,10 +209,16 @@ public class Gacha_Controller : MonoBehaviour
             }
             yield return null; //紙が落ちるのを待つ
         }
-        yield return new WaitForSeconds(3f); //紙が落ちてくるまでの待ち時間
+        yield return new WaitForSeconds(2f); //紙が落ちてくるまでの待ち時間
         camera0.GetComponent<Animator>().speed = 1;
+
+        
         StartCoroutine(WaitAndShow_Query()); //ここでようやくクエリを店つことができる！
         Lamps.GetComponent<Animator>().speed = 1; //ランプが点灯して考えてる感じ出すの開始
+
+
+        
+        StartCoroutine(Gacha_Dancing()); //ガチャのダンス開始！
         while (true)
         {
             if (_isQueryShowEnd == true)
@@ -263,6 +272,67 @@ public class Gacha_Controller : MonoBehaviour
             yield return null; //クエリが到着するのを待つ
         }
 
+        
+
+    }
+
+    IEnumerator Gacha_Dancing()
+    {
+
+        float init_background_bgm_volume = Change_walls_UI.GetComponent<AudioSource>().volume;
+        Change_walls_UI.GetComponent<AudioSource>().volume *= 0.3f; //バックグラウンドの音量を小さく！
+
+        GameObject Gacha = GameObject.Find("ガチャガチャ台");
+        gameObject.GetComponent<AudioSource>().clip = Gacha_Thinking_Dancing;
+        gameObject.GetComponent<AudioSource>().Play();
+
+        Vector3 init_size = Gacha.GetComponent<Transform>().transform.localScale;
+        Debug.Log(init_size);
+        float speed = 0.15f;
+        float Max_size = 1.1f;
+        float Min_size = 0.9f;
+        Vector3 normalized_Vector = new Vector3(0, 1, 0);
+        while (!_isQueryShowEnd)
+        {
+            
+            while(Gacha.GetComponent<Transform>().transform.localScale.y < Max_size * init_size.y)
+            {
+                Gacha.GetComponent<Transform>().transform.localScale += speed * Time.deltaTime*normalized_Vector;
+                yield return null;
+            }
+            
+            while(Gacha.GetComponent<Transform>().transform.localScale.y > Min_size*init_size.y)
+            {
+                Gacha.GetComponent<Transform>().transform.localScale -= speed * Time.deltaTime * normalized_Vector;
+                yield return null;
+            }
+
+        }
+
+        //クエリがきてダンシングを停止した後、元の大きさに戻す！
+        gameObject.GetComponent<AudioSource>().Stop();
+        //yield return new WaitForSeconds(0.5f);
+        gameObject.GetComponent<AudioSource>().PlayOneShot(ElectroMagnetic_wave_sound);
+
+        Change_walls_UI.GetComponent<AudioSource>().volume = init_background_bgm_volume; //バックグラウンドミュージックの音量を戻す！
+
+        if (Gacha.GetComponent<Transform>().transform.localScale.y > init_size.y)
+        {
+            while (Gacha.GetComponent<Transform>().transform.localScale.y > init_size.y)
+            {
+                Gacha.GetComponent<Transform>().transform.localScale -= speed * Time.deltaTime * normalized_Vector;
+                yield return null;
+            }
+        }
+        else
+        {
+            while (Gacha.GetComponent<Transform>().transform.localScale.y < init_size.y)
+            {
+                
+                Gacha.GetComponent<Transform>().transform.localScale += speed * Time.deltaTime * normalized_Vector;
+                yield return null;
+            }
+        }
         
 
     }

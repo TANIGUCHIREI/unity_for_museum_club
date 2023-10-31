@@ -2108,6 +2108,7 @@ GameObject:
   - component: {fileID: 1424707922}
   - component: {fileID: 1424707924}
   - component: {fileID: 1424707925}
+  - component: {fileID: 1424707926}
   m_Layer: 0
   m_Name: Gacha_Insert_Papaer
   m_TagString: Untagged
@@ -2217,7 +2218,104 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Start_Write_Text: 0
+  Inserting_Machine_Sound: {fileID: 8300000, guid: 676cd3413ffb1b7489f640ace4ef3b68, type: 3}
   Text: 
+--- !u!82 &1424707926
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424707921}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 9d49c62b5e5db0c46ab4590b1a45956a, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &1459295815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2842,6 +2940,8 @@ MonoBehaviour:
   shutter_sound: {fileID: 8300000, guid: cc383b474dce9ef4d995b801593893ca, type: 3}
   SpotLight_sound: {fileID: 8300000, guid: de076651f9baa354e846607e5875e47a, type: 3}
   Gacha_Emit_sound: {fileID: 8300000, guid: 239af87e48088bf4c89f5ca8ad46d3dc, type: 3}
+  ElectroMagnetic_wave_sound: {fileID: 8300000, guid: 5ad670dc0756c0e4ca7366973c457f24, type: 3}
+  Gacha_Thinking_Dancing: {fileID: 8300000, guid: ec37005f9f3b9694b9e550fd9f60c460, type: 3}
   Lamps: {fileID: 194977880}
   Finish_Lamp: {fileID: 6838955674076219293}
   SpotLight: {fileID: 0}
@@ -2882,10 +2982,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3359,7 +3459,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 8.38, y: 0, z: 10.52}
-  m_LocalScale: {x: 1, y: 1, z: 0.85}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3745622628511902072}

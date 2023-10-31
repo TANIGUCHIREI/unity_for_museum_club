@@ -91,14 +91,14 @@ public class change_wall : MonoBehaviour
 
         Now_Loading.GetComponent<Text>().enabled = false;
         SceneManager.LoadScene("Result"); //これでリザルト画面へ遷移！
-        yield return new WaitForSeconds(1f); //時間置いたほうがいいかなと思って
+        //yield return new WaitForSeconds(1f); //時間置いたほうがいいかなと思って
 
         gameObject.GetComponent<AudioSource>().volume = Audio_Volume; //リザルト画面の音楽再生開始！のためにまずはボリュームを戻す
         gameObject.GetComponent<AudioSource>().clip = result_bgm;
         gameObject.GetComponent<AudioSource>().Play(); //やっちゃた！の再生開始
-        //audioSource.PlayOneShot(result_bgm);
+                                                       //audioSource.PlayOneShot(result_bgm);
 
-
+        yield return new WaitForSeconds(1.5f); //時間置いたほうがいいかなと思って
         TMP_Text museum_name = GameObject.Find("museum_name").GetComponent<TMP_Text>();
         TMP_Text exhibition_type = GameObject.Find("exhibition_type").GetComponent<TMP_Text>();
         TMP_Text prefecture = GameObject.Find("prefecture").GetComponent<TMP_Text>();
@@ -197,10 +197,13 @@ public class change_wall : MonoBehaviour
       
 
 
-        yield return new WaitForSeconds(3f); //扉を開くまでの時間
+        yield return new WaitForSeconds(2f); //扉を開くまでの時間
         gameObject.GetComponent<AudioSource>().volume = Audio_Volume; //これがないとならない！
         gameObject.GetComponent<AudioSource>().clip = Gacha_BackGround_bgm;
         gameObject.GetComponent<AudioSource>().Play(); //やっちゃた！の再生開始
+
+        yield return new WaitForSeconds(2f); //扉を開くまでの時間
+
         //GameObject User_Input_Text = GameObject.Find("User_Input_Text"); //ここからの処理でUserInputがガチャの入力用紙に反映されるようにする、Wwaitの後に置かないとNullReferenceになる！
         string userinput_text = init_camera.GetComponent<ClientManager>().userinput_text;
         //User_Input_Text.GetComponent<TMP_Text>().text = "「" + userinput_text + "」\n";
