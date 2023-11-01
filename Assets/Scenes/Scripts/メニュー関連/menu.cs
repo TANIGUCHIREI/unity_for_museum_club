@@ -47,7 +47,9 @@ public class menu : MonoBehaviour
     public bool _isOmakase;
     public bool _isKansaiOnly = true;
 
-   
+    public AudioClip back_menu_sound;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -193,6 +195,7 @@ public class menu : MonoBehaviour
     {
         if(menus.GetComponent<RectTransform>().anchoredPosition.x! <-100)
         {
+            gameObject.GetComponent<AudioSource>().PlayOneShot(back_menu_sound);
             //メニューが１ではなく2_1とか2_2とか3ならバックできる
             //speed分translateさせて動くから、実際には若干座標がずれることに注意
             StartCoroutine(menu_move(speed));
