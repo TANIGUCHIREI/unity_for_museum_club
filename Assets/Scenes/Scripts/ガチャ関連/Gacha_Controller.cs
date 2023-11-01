@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Gacha_Controller : MonoBehaviour
 {
@@ -32,8 +33,14 @@ public class Gacha_Controller : MonoBehaviour
     public bool _isPaperInsertFinish = false;
     public bool _isQueryShowEnd = false;
     public bool _isGacha_knob_Rotate_finish = false;
+
+    public Material mySkyboxMaterial;
     void Start()
     {
+
+        StartCoroutine(Rotate_skybox(speed: 0.5f)); //skyboxを回す！
+
+
         Init_Camera = GameObject.Find("Init_Camera"); //�͂��߂�������p���ꂽ���
         SpotLight = GameObject.Find("Directional Light");
         Change_walls_UI = GameObject.Find("Change_walls_UI");
@@ -58,7 +65,8 @@ public class Gacha_Controller : MonoBehaviour
         White_Blined_Circle = GameObject.Find("White_Blined_Circle");
         White_Blined_Circle.GetComponent<Animator>().speed = 0;
 
-
+        //RenderSettings.skybox = mySkyboxMaterial; //背景のマテリアルを強制的に変更
+        //DynamicGI.UpdateEnvironment();
 
         //SpotLight.GetComponent<Light>().intensity = 2f; //ガチャカプセルのモーションテスト用　ライトつけて見やすくします
         //camera0.GetComponent<Animator>().enabled = false; //テスト用、実際は動きます
@@ -92,26 +100,47 @@ public class Gacha_Controller : MonoBehaviour
         
     }
 
+    IEnumerator Rotate_skybox(float speed)
+    {
+        float rot = 0f;
+        
+        while (true)
+        {
+            rot += speed * Time.deltaTime;
+            RenderSettings.skybox.SetFloat("_Rotation", rot);    //skyboxを回す
+            yield return null;
+        }
+    }
     public IEnumerator Gacha_Capsule_Move()
     {
-        
+
+       
+
+
         float r = Random.Range(0.1f, 2); //なぜかわからんけどこんな変な値でいい感じの色になった・・・256だと真っ白、1fだと真っ黒なのに・・・意味わからんけど動くからいいや
         float g = Random.Range(0.1f, 2);
         float b = Random.Range(0.1f, 2);
         
         GameObject.Find("Sphere").GetComponent<Renderer>().sharedMaterial.color = new Color(r, g, b,1); //出るガチャの色が毎回変わります
-        GameObject.Find("Sphere").GetComponent<Transform>().Rotate(new Vector3(0,0, Random.Range(-180, 180)));
+        GameObject.Find("Sphere").GetComponent<Transform>().Rotate(new Vector3(0,0, Random.Range(-90, 90)));
         audioSource.PlayOneShot(Gacha_Emit_sound);
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = false;
 
-        yield return new WaitForSeconds(0.3f);
+
+        Change_walls_UI.GetComponent<Animator>().speed = 1f; //初回動作移行は常に動くようになる！
+        Change_walls_UI.GetComponent<Animator>().Play("LetterBox_show", 0, 0f); //映画風の演出スタート（上下の黒帯はレターボックスというらしい）
+
+
+        yield return new WaitForSeconds(1f);
 
         Change_walls_UI.GetComponent<AudioSource>().clip = Change_walls_UI.GetComponent<change_wall>().Gacha_result_bgm;
         Change_walls_UI.GetComponent<AudioSource>().Play();//ガチャ出るときのかっこいい音を再生
         Change_walls_UI.GetComponent<AudioSource>().loop = false;
 
+        
+        
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
         Gacha_capsule.GetComponent<Rigidbody>().useGravity = true;
         yield return new WaitForSeconds(0.1f);
         Gacha_capsule.GetComponent<Rigidbody>().AddForce(new Vector3(0, -200f, -3000f)); //若干初速を与える
@@ -134,8 +163,9 @@ public class Gacha_Controller : MonoBehaviour
         Gacha_capsule.GetComponent<Animator>().speed = 0.8f; //再生開始、若干おそめにするのがよいような
         yield return new WaitForSeconds(2f);
         White_Blined_Circle.GetComponent<Animator>().speed = 1; //これで画面真っ白になる！
+        Change_walls_UI.GetComponent<Animator>().Play("Letter_Box_hide", 0, 0f); //これで黒帯を隠す！
 
-      
+
         Change_walls_UI.GetComponent<change_wall>().StartCoroutine(Change_walls_UI.GetComponent<change_wall>().change_3_to_result()); //画面遷移の開始
 
     }
@@ -172,8 +202,8 @@ public class Gacha_Controller : MonoBehaviour
         float WaitTime = Random.Range(10f, 20f);
         yield return new WaitForSeconds(WaitTime); //疑似的に待ち時間を作る
         Init_Camera.GetComponent<ClientManager>().prefecture = "鳥取県";
-        Init_Camera.GetComponent<ClientManager>().museum_name = "なしっこ館";
-        Init_Camera.GetComponent<ClientManager>().exhibition_name = "常設展";
+        Init_Camera.GetComponent<ClientManager>().museum_name = "なしっこ館あああああああああああああああああああああああああああああああああああああああああああああああ";
+        Init_Camera.GetComponent<ClientManager>().exhibition_name = "常設展あああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ";
         Init_Camera.GetComponent<ClientManager>().exhibition_reason = "鳥取よいこと一度はおいで！";
         Init_Camera.GetComponent<ClientManager>()._isAnserArrive = true; //これで疑似的に回答が来たことにする
 
@@ -261,6 +291,9 @@ public class Gacha_Controller : MonoBehaviour
             yield return null; //ユーザーがガチャノブを回すまで待つ
         }
 
+
+
+        
         camera0.GetComponent<Animator>().speed = 1; //カメラ再生再開
         StartCoroutine(Gacha_Capsule_Move()); //ガチャをここで落とす
         //リザルト画面へのカメラを真っ白にする演出はGacha_Capsule_Move()内でやってます

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using Newtonsoft.Json;
 using System.Text;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 public class change_wall : MonoBehaviour
 {
@@ -55,6 +56,10 @@ public class change_wall : MonoBehaviour
         audioSource.volume = Audio_Volume;  
         audioSource.clip = menu_bgm;
         audioSource.Play();  //はじめのやつ流す
+
+        //gameObject.GetComponent<Animator>().Play("LetterBox_show", 0, 0f);
+        //gameObject.GetComponent<Animator>().Play("Letter_Box_hide", 0, 0f);
+        gameObject.GetComponent<Animator>().speed = 0f; //初期動作を停止させる
     }
 
     // Update is called once per frame
@@ -117,12 +122,17 @@ public class change_wall : MonoBehaviour
         //audioSource.PlayOneShot(result_bgm);
 
         yield return new WaitForSeconds(3f); //時間置いたほうがいいかなと思って
-        TMP_Text museum_name = GameObject.Find("museum_name").GetComponent<TMP_Text>();
-        TMP_Text exhibition_type = GameObject.Find("exhibition_type").GetComponent<TMP_Text>();
-        TMP_Text prefecture = GameObject.Find("prefecture").GetComponent<TMP_Text>();
-        museum_name.text = init_camera.GetComponent<ClientManager>().museum_name;
-        exhibition_type.text = init_camera.GetComponent<ClientManager>().exhibition_name;
-        prefecture.text = init_camera.GetComponent<ClientManager>().prefecture;
+        GameObject museum_name = GameObject.Find("museum_name");
+        GameObject exhibition_type = GameObject.Find("exhibition_type");
+        GameObject prefecture = GameObject.Find("prefecture");
+        museum_name.GetComponent<TMP_Text>().text = init_camera.GetComponent<ClientManager>().museum_name;
+        exhibition_type.GetComponent<TMP_Text>().text = init_camera.GetComponent<ClientManager>().exhibition_name;
+        prefecture.GetComponent<TMP_Text>().text = init_camera.GetComponent<ClientManager>().prefecture;
+
+        //ここからテキストサイズがちょうどよい大きさになるように調整する
+        StartCoroutine(AdjustFontSizeBasedOnPreferredHeight(museum_name, maxPreferredHeight: 265));
+        StartCoroutine(AdjustFontSizeBasedOnPreferredHeight(exhibition_type, maxPreferredHeight: 500));
+
 
         yield return new WaitForSeconds(4f); //印刷開始まで、リザルト表示中にスタンバってる、表示中の途中辺りからPRINT_STARTをサーバに送信する
         //ここから"PRINT_START"を送って印刷を開始する
@@ -144,16 +154,24 @@ public class change_wall : MonoBehaviour
 
         yield return new WaitForSeconds(4f);
         //GameObject.Find("PrintingNow...").GetComponent<Animator>().enabled = true; //これで印刷しています・・・がチカチカするようになる
+    }
 
-
-        IEnumerator Fake_Print_Finish_Arrive()
+    IEnumerator AdjustFontSizeBasedOnPreferredHeight(GameObject obj,float maxPreferredHeight)
+    {
+        TextMeshProUGUI tmp = obj.GetComponent<TextMeshProUGUI>();
+        // Preferred Heightが指定した最大値より大きい場合、whileループでフォントサイズを調整
+        while (tmp.preferredHeight > maxPreferredHeight && tmp.fontSize > 0)
         {
-            float WaitTime = Random.Range(15f, 20f);
-            yield return new WaitForSeconds(WaitTime); //疑似的に待ち時間を作る
-            init_camera.GetComponent<ClientManager>()._isPrintFinish = true;
-
+            tmp.fontSize -= 10f;
+            yield return null;
         }
+    }
 
+    IEnumerator Fake_Print_Finish_Arrive()
+    {
+        float WaitTime = Random.Range(15f, 20f);
+        yield return new WaitForSeconds(WaitTime); //疑似的に待ち時間を作る
+        init_camera.GetComponent<ClientManager>()._isPrintFinish = true;
 
     }
 

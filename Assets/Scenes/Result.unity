@@ -2270,7 +2270,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5E38\u8A2D\u5C55"
+  m_text: "\u5E38\u8A2D\u5C55aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fcd6ac16e3314c249bd4c3f6e1ce7c15, type: 2}
   m_sharedMaterial: {fileID: -8674758873511368894, guid: fcd6ac16e3314c249bd4c3f6e1ce7c15, type: 2}
@@ -2305,7 +2305,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 5
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -2333,7 +2333,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -353.84393, y: 0, z: -453.99548, w: -265.3828}
+  m_margin: {x: -353.84393, y: 0, z: -453.99548, w: -452.47543}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
