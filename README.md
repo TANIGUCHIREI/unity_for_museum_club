@@ -4,9 +4,15 @@
 https://github.com/TANIGUCHIREI/unity_for_museum_club/assets/120480219/c965ca57-05c9-43a0-9e70-7c544230229f
 
 https://github.com/TANIGUCHIREI/unity_for_museum_club/assets/120480219/7f29703d-d72b-478d-bf7d-42d7e1ae2f7c
+
 上の２つ目の動画にて印刷中・・・と出ていますが、このときにGPT4からの回答からpdfを作成して下のような検索結果を自動的に印刷します。
 ![F-ey5F4XsAEW3hA](https://github.com/TANIGUCHIREI/unity_for_museum_club/assets/120480219/bea80016-a753-4d2b-8fd2-d28d8dfe5c18)
 
+アプリ中に登場するミュージアム同好会のロゴ、昔懐かしいガチャガチャ・日本地図の3Dモデル、ガチャガチャに書かれているミュシャ風のチラシなども全て自作しました。（illustratorとphotoshop及びblenderを使用）
+
+![スクリーンショット 2024-04-06 173130](https://github.com/TANIGUCHIREI/unity_for_museum_club/assets/120480219/3483235a-a194-47d9-9961-9db51304cfca)
+
+![スクリーンショット 2024-04-06 180848](https://github.com/TANIGUCHIREI/unity_for_museum_club/assets/120480219/b295955c-7af4-42f7-a7b8-d562440491a6)
 
 ## gitでunityを管理する場合は以下のURLが参考になりました！
 https://styly.cc/ja/tips/michi_unity_github/
